@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:46 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/01/28 13:37:27 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/01/28 14:17:09 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,19 @@
 
 // int     create_thread(pthread_t *thread,)
 
+// typedef struct s_mtx
+// {
+// 	int		index;
+
+// }			t_mtx;
+
+// typedef struct s_fork
+// {
+// 	t_mtx	fork;
+// 	int		id;
+// 	int		thread_id;
+// }			t_fork;
+
 // typedef struct s_philo
 // {
 // 	int		id;
@@ -30,20 +43,18 @@
 // 	t_mtx	*mutexes;
 // }			t_philo;
 
-// pthread_t   *init_threads(int nums)
-// {
-//     int     id;
-//     t_philo p;
-//     int     i;
+pthread_t	*init_threads(int nums)
+{
+	int		id;
+	t_philo	p;
+	int		i;
 
-//     i = 0;
-//     while (i < nums)
-//     {
-//         p.id = i + 1;
-
-//     }
-
-// }
+	i = 0;
+	while (i < nums)
+	{
+		p.id = i + 1;
+	}
+}
 
 static int	print_usage(void)
 {
