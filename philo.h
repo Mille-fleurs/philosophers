@@ -14,7 +14,6 @@
 # define PHILO_h
 
 # include <pthread.h>
-# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -23,38 +22,34 @@
 
 # define ERR_USAGE "Usage: ./philo number_of_philosopher time_to_die time_to_eat time_to_sleep [number_of_times]"
 
-typedef struct s_mtx
+typedef struct 	s_philo
 {
-	int		index;
+	pthread_t		thread;
+	int				id;
+	int 			eating;
+	int				meals_eaten;
+	size_t			last_meal; /* current_time - last_meal > time_to_die */
+	size_t			time_to_die;
+	size_t			time_to_eat;
+	size_t			time_to_sleep;
+	size_t			start_time;
+	int				num_philos;
+	int				num_times_eat;
+	int				*dead;
+	pthread_mutex_t	*r_fork;
+	pthread_mutex_t *l_fork;
+	pthread_mutex_t *dead_lock;
+	pthread_mutex_t *meal_lock;
+}				t_philo;
 
-}			t_mtx;
-
-typedef struct s_fork
+typedef struct	s_program
 {
-	t_mtx	fork;
-	int		id;
-	int		thread_id;
-}			t_fork;
-
-typedef struct s_philo
-{
-	int		id;
-	int		*left_fork;
-	int		*right_fork;
-	int		meals;
-	bool	full;
-	long	last_time;
-	t_mtx	*mutexes;
-}			t_philo;
-
-typedef struct s_table
-{
-	int		nums;
-	long	t_die;
-	long	t_eat;
-	long	t_sleep;
-	int		meals;
-}			t_table;
+	int				dead_flag;
+	pthread_mutex_t	dead_lock;
+	pthread_mutex_t meal_lock;
+	pthread_mutex_t	write_lock;
+	t_philo			*philos;
+}				t_program;
 
 int			ft_atoi(const char *str, int *error);
 int			ft_strlen(char *str);
