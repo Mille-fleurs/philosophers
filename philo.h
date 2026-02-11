@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/01/28 14:17:11 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/11 21:42:21 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,17 @@ typedef struct s_table
 	t_fork	*forks;
 	t_philo	*philos;
 }				t_table;
+
+typedef enum s_op
+{
+	LOCK,
+	UNLOCK,
+	CREATE,
+	INIT,
+	DESTROY,
+	JOIN,
+	DETATCH,
+}			t_op;
 
 // typedef struct 	s_philo
 // {
