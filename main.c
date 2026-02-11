@@ -17,31 +17,41 @@
 //        void *(*start_routine)(void *),
 //        void *restrict arg);
 
-// int     create_thread(pthread_t *thread,)
-
-// typedef struct s_mtx
+// typedef	struct s_mtx
 // {
-// 	int		index;
-
-// }			t_mtx;
+// 	pthread_mutex_t	l_fork;
+// 	pthread_mutex_t	r_fork;
+// }						t_mtx;
 
 // typedef struct s_fork
 // {
-// 	t_mtx	fork;
-// 	int		id;
-// 	int		thread_id;
-// }			t_fork;
+// 	t_mtx fork;
+// 	int	fork_id;
+// }				t_fork;
 
-// typedef struct s_philo
+// typedef	struct	s_philo
 // {
-// 	int		id;
-// 	int		*left_fork;
-// 	int		*right_fork;
-// 	int		meals;
-// 	bool	full;
-// 	long	last_time;
-// 	t_mtx	*mutexes;
-// }			t_philo;
+// 	int	id; //1..N
+// 	int count;
+// 	t_fork	*l_fork;
+// 	t_fork	*r_fork;
+// 	long long last_meal_time;
+// 	pthread_t	thread_id;
+// 	t_table	*table;
+// }				t_philo;
+
+// typedef struct s_table
+// {
+// 	int philo_num;
+// 	int time_to_die;
+// 	int	time_to_eat;
+// 	int	time_to_sleep;
+// 	int meal_num; //FLAG if -1
+// 	long long start_time;
+// 	pthread_mutex_t	dead_mutex;
+// 	t_fork	*forks;
+// 	t_philo	*philos;
+// }				t_table;
 
 pthread_t	*init_threads(int nums)
 {
@@ -91,22 +101,30 @@ static char	*dup_digit(char *str)
 	return (dup);
 }
 
+int	init_data(char av, t_table t)
+{
+	int error;
+
+	error = 0;
+	
+
+}
+
 int	main(int ac, char **av)
 {
 	int		i;
 	int		error;
 	t_table	t;
 
-	if (ac < 6 || !check_brackets(av[5]))
+	if (ac != 5 || ac != 6 || !check_brackets(av[5]))
 		return (print_usage());
 	i = 1;
 	error = 0;
-	t.nums = ft_atoi(av[1], &error);
-	t.t_die = ft_atoi(av[2], &error);
-	t.t_eat = ft_atoi(av[3], &error);
-	t.t_sleep = ft_atoi(av[4], &error);
-	t.meals = ft_atoi(dup_digit(av[5]), &error);
+	
 	if (error)
 		return (1);
 	return (0);
 }
+
+// dinner_start
+// end with no leak -> philos full | | 1 philo died
