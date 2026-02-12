@@ -1,18 +1,18 @@
 
 #include "philo.h"
 
-pthread_t	*init_threads(int nums)
-{
-	int		id;
-	t_philo	p;
-	int		i;
+// pthread_t	*init_threads(int nums)
+// {
+// 	int		id;
+// 	t_philo	p;
+// 	int		i;
 
-	i = 0;
-	while (i < nums)
-	{
-		p.id = i + 1;
-	}
-}
+// 	i = 0;
+// 	while (i < nums)
+// 	{
+// 		p.id = i + 1;
+// 	}
+// }
 
 	// int	id; //1..N
 	// int count;
@@ -22,19 +22,33 @@ pthread_t	*init_threads(int nums)
 	// pthread_t	thread_id;
 	// t_table	*table;
 
-int init_philo(t_table *t)
-{
-    int i;
-    t_philo *p;
+// void	init_fork(t_table *t)
+// {
+// 	t_fork *f;
+// 	int	i;
 
-    i = -1;
-    while (++i < t->philo_num)
-    {
-        p = t->philos
-    }
+// 	i = -1;
+// 	while (++i < t->philo_num)
+// 	{
+// 		if (pthread_mutex_init()
+// 	}
+// } 
 
+// void	init_philo(t_table *t)
+// {
+//     int i;
+//     t_philo *p;
 
-}
+//     i = -1;
+//     while (++i < t->philo_num)
+//     {
+// 		p->id = i + 1;
+// 		p->count = 0;
+// 		p->l_fork = 
+//     }
+ 
+
+// }
 
 int	init_table(t_table *t, int ac, char **av)
 {
@@ -56,7 +70,7 @@ int	init_table(t_table *t, int ac, char **av)
     i = -1;
     while (++i < t->philo_num)
     {
-        safe_mutex_handle(&t->forks[i].fork, INIT);
+        safe_mutex_handle(&t->forks[i].mutex, INIT);
         t->forks[i].fork_id = i;
     }
 	return (1);

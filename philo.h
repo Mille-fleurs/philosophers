@@ -6,12 +6,12 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/12 21:11:17 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/12 23:48:39 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-# define PHILO_h
+# define PHILO_H
 
 # include <pthread.h>
 # include <stdio.h>
@@ -25,15 +25,15 @@
 
 typedef struct s_table t_table;
 
-typedef	struct s_mtx
-{
-	pthread_mutex_t	fork;
-	int	index;
-}						t_mtx;
+// typedef	struct s_mtx
+// {
+// 	pthread_mutex_t	mutex;
+// 	int	index;
+// }						t_mtx;
 
 typedef struct s_fork
 {
-	t_mtx fork;
+	pthread_mutex_t mutex;
 	int	fork_id;
 }				t_fork;
 
