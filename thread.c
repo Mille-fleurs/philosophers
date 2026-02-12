@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:52 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/01/28 14:17:25 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/12 21:11:20 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,26 +31,26 @@ void	handle_thread_error(int status, t_op op)
 	if (status == EAGAIN)
 		error_msg("Insufficient resources to create another thread\n");
 	else if (status == EINVAL && (op == JOIN || op == DETATCH))
-		error_msg("The value specified by attr is invalid.\n");
-	else if (status == ENOMEM)
-		error_msg("The process cannot allocate enough memory to create another mutex.\n");
+		error_msg("The thread is not a joinable thread\n");
+	else if (status == EINVAL && op == CREATE)
+		error_msg("Invalid settings in attr\n");
 	else if (status == EPERM)
-		error_mdg("The current thread does not hold a lock on mutex.\n");
-	else if (status == EBUSY)
-		error_msg("Mutex is locked.\n");	
+		error_mdg("No permission to set the scheduling policy/parameters specified in attr.\n");
+	else if (status == ESRCH)
+		error_msg("No thread with the given ID could be found.\n");	
 	else if (status == EDEADLK)
-		error_msg("A deadlock would occur if the thread blocked waiting for mutex.\n");
+		error_msg("Deadlock detected.\n");
 	return ;
 }
 
 void safe_thread_handle(t_mtx *mutex, t_op code)
 {
-	if (code == LOCK)
-		handle_utex_error(pthread_mutex_lock(mutex), code);
+	if (code == CREATE)
+		handle_utex_error(pthread_mutex_create(mutex), code);
 	else if (code == UNLOCK)
-		handle_mutex_error(pthread_mutex_unlock(mutex), code);
+		handle_mutex_error(pthread_mutex_join(mutex), code);
 	else if (code == INIT)
-		handle_mutex_error(pthread_mutex_init(mutex, NULL), code);
+		handle_mutex_error(pthread_mutex_detatch(mutex, NULL), code);
 	else
 		error_msg("Error\n");
 }
