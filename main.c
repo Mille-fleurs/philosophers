@@ -53,19 +53,6 @@
 // 	t_philo	*philos;
 // }				t_table;
 
-pthread_t	*init_threads(int nums)
-{
-	int		id;
-	t_philo	p;
-	int		i;
-
-	i = 0;
-	while (i < nums)
-	{
-		p.id = i + 1;
-	}
-}
-
 static int	print_usage(void)
 {
 	write(1, ERR_USAGE, 2);
@@ -148,26 +135,6 @@ void	handle_mutex_error(int status, t_op op)
 		error_msg("A deadlock would occur if the thread blocked waiting for mutex.\n");
 	return ;
 }
-
-int	init_data(t_table *t, int ac, char **av)
-{
-	int error;
-
-	error = 0;
-	t->philo_num = ft_atoi(av[1], &error);
-	t->t_die = ft_atoi(av[2], &error);
-	t->t_eat = ft_atoi(av[3], &error);
-	t->t_sleep = ft_atoi(av[4], &error);
-	if (ac == 6 && check_brakets(av[5]))
-		t->meal_num = ft_atoi(av[5], &error);
-	else
-		t->meal_num = -1;
-	t->start_time = get_current_time();
-	t->forks = safe_malloc(t->philo_num * sizeof(t_fork));
-	t->philos = safe_malloc(t->philo_num * sizeof(t_philo));
-	return (1);
-}
-
 
 int	main(int ac, char **av)
 {
