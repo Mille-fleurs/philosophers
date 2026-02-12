@@ -19,6 +19,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <limits.h>
+# include <errno.h>
 
 # define ERR_USAGE "Usage: ./philo number_of_philosopher time_to_die time_to_eat time_to_sleep [number_of_times]"
 

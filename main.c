@@ -113,24 +113,40 @@ static char	*dup_digit(char *str)
 	return (dup);
 }
 
-t_philo *init_philos(int num)
+int	error_msg(char *str)
 {
-	t_philo *p;
-
-	p = malloc(sizeof(t_philo) * num);
-	if (!p)
-		return (NULL);
-	return (p);
+	write(2, str, ft_strlen(str));
+	write(2, "\n", 1);
+	return (1);
 }
 
-t_fork *init_forks(int num)
+void *safe_malloc(size_t bytes)
 {
-	t_fork *f;
+	void	*ret;
 
-	f = malloc(sizeof(t_fork) * num);
-	if (!f)
+	ret = malloc(bytes);
+	if (!ret)
 		return (NULL);
-	return (f);
+	return (ret);
+}
+
+void	handle_mutex_error(int status, t_op op)
+{
+	if (status == 0)
+		return ;
+	if (status == EINVAL && (op == LOCK || op == UNLOCK))
+		error_msg("The value specified by mutex is invalid.\n");
+	else if (status == EINVAL && (op == INIT || op ==DESTROY))
+		error_msg("The value specified by attr is invalid.\n");
+	else if (status == ENOMEM)
+		error_msg("The process cannot allocate enough memory to create another mutex.\n");
+	else if (status == EPERM)
+		error_mdg("The current thread does not hold a lock on mutex.\n");
+	else if (status == EBUSY)
+		error_msg("Mutex is locked.\n");	
+	else if (status == EDEADLK)
+		error_msg("A deadlock would occur if the thread blocked waiting for mutex.\n");
+	return ;
 }
 
 int	init_data(t_table *t, int ac, char **av)
@@ -147,10 +163,11 @@ int	init_data(t_table *t, int ac, char **av)
 	else
 		t->meal_num = -1;
 	t->start_time = get_current_time();
-
-
-
+	t->forks = safe_malloc(t->philo_num * sizeof(t_fork));
+	t->philos = safe_malloc(t->philo_num * sizeof(t_philo));
+	return (1);
 }
+
 
 int	main(int ac, char **av)
 {
