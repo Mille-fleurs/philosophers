@@ -1,8 +1,6 @@
 
 #include "philo.h"
 
-// - if no meals, return ->[0]
-// - if only one philo -> ad hoc fucntion 
 // - create all threads, all philos
 // - create a monitor thread
 // -synchronize the beginning of the simulation
@@ -74,27 +72,60 @@ void	ft_purstr(char *s, int fd)
 	}
 }
 
-void	print_status(t_status code)
+void	print_status(int p_index, t_status code)
 {
 	if (code == EAT)
-		ft_putstr("Philo is eating.\n", 1);
+		printf("%d is eating\n", p_index);
 	else if (code == SLEEP)
-		ft_putstr("Philo is sleeping.\n", 1);
+		printf("%d is sleeping\n", p_index);
 	else if (code == THINK)
-		ft_putstr("Philo is thinking.\n", 1);
+		printf("%d is thinking\n", p_index);
 	else if (code == LEFT_FORK)
-		ft_putstr("Philo is taking left fork.\n", 1);
+		printf("%d has taken a fork\n", p_index);
 	else if (code == RIGHT_FORK)
-		ft_putstr("Philo is taking right fork.\n", 1);
+		printf("%d is taken a fork\n", p_index);
 	else if (code == DIED)
-		ft_putstr("Philo is died.\n", 1);
+		printf("%d died\n", p_index);
 }
 
 void	only_one_philo(t_table *t)
 {	
 	usleep(t->t_die);
-	print_status(DIED);
+	print_status(1, DIED);
 	cleanup_table(t, t->philo_num, 0);
+}
+
+int		wait_all_thread(t_table *t)
+{
+	int	i;
+
+	i = -1;
+	while (++i < t->philo_num)
+	{
+		if (safe_thread_handle(&t->philos[i].thread_id, dinner_simulation, JOIN) == 1)
+			return (1);
+		
+	}
+}
+// Take forks 
+// Eat
+// Sleep 
+// Think 
+// Repeat
+
+int	take_fork(t_table *t, int p_index)
+{
+	t_fork f;
+	int	f_index;
+
+	if (p_index % 2)
+		f_index = p_index;
+	else
+		f_index = (p_index + 1) % t->philo_num;
+	f = t->forks[f_index];
+	if (set_int(&f.mtx, &f.taken, 1) == 1)
+		return (1);
+	return (0);
 }
 
 void    *dinner_simulation(void *data)
@@ -102,6 +133,12 @@ void    *dinner_simulation(void *data)
     t_philo *p;
 
     p = (t_philo *)data;
+
+
+
+
+
+
 
 
     return (NULL);
@@ -121,11 +158,8 @@ int    dinner_start(t_table *t)
     i = -1;
     while (++i < t->philo_num)
     {
-        if (safe_mutex_handle )
-
-    }
-
-
-
+        if (safe_mutex_handle(&t->forks[i].mtx, INIT) == 1)
+			return (1);
+	}
     return (0);
 }

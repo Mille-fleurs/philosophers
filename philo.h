@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 18:20:37 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/14 19:29:37 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ typedef struct s_fork
 {
 	pthread_mutex_t mtx;
 	int	id;
+	int taken;
 }				t_fork;
 
 typedef	struct	s_philo
