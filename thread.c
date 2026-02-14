@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:52 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/12 21:11:20 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/01/28 14:17:25 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,29 +28,36 @@ void	handle_thread_error(int status, t_op op)
 {
 	if (status == 0)
 		return ;
-	if (status == EAGAIN)
-		error_msg("Insufficient resources to create another thread\n");
-	else if (status == EINVAL && (op == JOIN || op == DETATCH))
-		error_msg("The thread is not a joinable thread\n");
+	if (status == EAGAIN && op == CREATE)
+		error_msg("Not enough resources to create thread.\n");
 	else if (status == EINVAL && op == CREATE)
-		error_msg("Invalid settings in attr\n");
-	else if (status == EPERM)
-		error_mdg("No permission to set the scheduling policy/parameters specified in attr.\n");
+		error_msg("Invalid thread attributes.\n");
+	else if (status == EINVAL && (op == JOIN || op == DETACH))
+		error_msg("Invalid thread (not joinable or invalid ID).\n");
 	else if (status == ESRCH)
-		error_msg("No thread with the given ID could be found.\n");	
-	else if (status == EDEADLK)
-		error_msg("Deadlock detected.\n");
-	return ;
+		error_msg("NO thread with given ID exists.\n");
+	else if (status == EDEADLK && op == JOIN)
+		error_msg("Deadlock detected while joining thread.\n");
+	else
+		error_msg("Thread operation error.\n");
 }
 
-void safe_thread_handle(t_mtx *mutex, t_op code)
+int safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg, t_op op)
 {
-	if (code == CREATE)
-		handle_utex_error(pthread_mutex_create(mutex), code);
-	else if (code == UNLOCK)
-		handle_mutex_error(pthread_mutex_join(mutex), code);
-	else if (code == INIT)
-		handle_mutex_error(pthread_mutex_detatch(mutex, NULL), code);
+	int status;
+
+	if (op == CREATE)
+		status = pthread_create(t, NULL, routine, arg);
+	else if (op == JOIN)
+		status = pthread_join(*t, NULL);
+	else if (op == DETACH)
+		status = pthread_detach(*t);
 	else
-		error_msg("Error\n");
+		return (1);
+	if (status != 0)
+	{
+		handle_thread_error(status, op);
+		return (1);
+	}
+	return (0);
 }

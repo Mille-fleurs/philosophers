@@ -6,12 +6,12 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/12 23:48:39 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/11 21:42:21 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-# define PHILO_H
+# define PHILO_h
 
 # include <pthread.h>
 # include <stdio.h>
@@ -25,24 +25,19 @@
 
 typedef struct s_table t_table;
 
-// typedef	struct s_mtx
-// {
-// 	pthread_mutex_t	mutex;
-// 	int	index;
-// }						t_mtx;
-
 typedef struct s_fork
 {
-	pthread_mutex_t mutex;
-	int	fork_id;
+	pthread_mutex_t mtx;
+	int	id;
 }				t_fork;
 
 typedef	struct	s_philo
 {
 	int	id; //1..N
-	int count;
-	t_fork	*l_fork;
-	t_fork	*r_fork;
+	int is_full;
+	int	meals_eaten;
+	t_fork	*first_f;
+	t_fork	*second_f;
 	long long last_meal_time;
 	pthread_t	thread_id;
 	t_table	*table;
@@ -55,8 +50,11 @@ typedef struct s_table
 	int	t_eat;
 	int	t_sleep;
 	int meal_num; //FLAG if -1
+	int	end; //someone died or ate enough
+	int all_ready;
 	long long start_time;
-	pthread_mutex_t	dead_mutex;
+	pthread_mutex_t table_mutex;
+	pthread_mutex_t	end_mutex;
 	t_fork	*forks;
 	t_philo	*philos;
 }				t_table;
@@ -69,7 +67,7 @@ typedef enum s_op
 	INIT,
 	DESTROY,
 	JOIN,
-	DETATCH,
+	DETACH,
 }			t_op;
 
 // typedef struct 	s_philo
@@ -102,6 +100,7 @@ typedef enum s_op
 // 	t_philo			*philos;
 // }				t_program;
 
+void     cleanup_table(t_table *t, int forks_inited, int end_inited);
 int			ft_atoi(const char *str, int *error);
 int			ft_strlen(char *str);
 
