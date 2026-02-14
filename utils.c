@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:01:43 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/01/28 14:17:17 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/14 18:20:44 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,12 @@ size_t	get_current_time(void)
 	return (time.tv_sec * 1000 + time.tv_usec / 1000);
 }
 
-int		ft_usleep(size_t milliseconds)
-{
-	size_t	start;
+// int		ft_usleep(size_t milliseconds)
+// {
+// 	size_t	start;
 
-	start = get_current_time();
-	while ((get_current_time() - start) < milliseconds)
-		usleep(500);
-	return (0);
-}
+// 	start = get_current_time();
+// 	while ((get_current_time() - start) < milliseconds)
+// 		usleep(500);
+// 	return (0);
+// }

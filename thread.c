@@ -6,23 +6,11 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:52 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/01/28 14:17:25 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/14 15:53:22 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-// pthread_create()
-// EAGAIN: “Insufficient resources to create another thread” (or system/user thread limit reached).
-// EINVAL: “Invalid settings in attr” (bad pthread_attr_t, bad stack size, etc.).
-// EPERM: “No permission to set the scheduling policy/parameters specified in attr.”
-// pthread_join()
-// EINVAL: “The thread is not joinable” (e.g., it was detached) or “another thread is already joining it”.
-// ESRCH: “No thread with the given ID could be found.”
-// EDEADLK: “Deadlock detected” (e.g., trying to join yourself, or circular join situation).
-// pthread_detach()
-// EINVAL: “The thread is not a joinable thread” (already detached, or invalid state).
-// ESRCH: “No thread with the given ID could be found.”
 
 void	handle_thread_error(int status, t_op op)
 {

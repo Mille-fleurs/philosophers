@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/11 21:42:21 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/14 18:20:37 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,8 @@ typedef struct s_table
 	int	t_eat;
 	int	t_sleep;
 	int meal_num; //FLAG if -1
-	int	end; //someone died or ate enough
-	int all_ready;
+	int	end; //someone died or ate enoughS
+	int all_thread_ready;
 	long long start_time;
 	pthread_mutex_t table_mutex;
 	pthread_mutex_t	end_mutex;
@@ -70,35 +70,15 @@ typedef enum s_op
 	DETACH,
 }			t_op;
 
-// typedef struct 	s_philo
-// {
-// 	pthread_t		thread;
-// 	int				id;
-// 	int 			eating;
-// 	int				meals_eaten;
-// 	size_t			last_meal; /* current_time - last_meal > time_to_die */
-// 	size_t			time_to_die;
-// 	size_t			time_to_eat;
-// 	size_t			time_to_sleep;
-// 	size_t			start_time;
-// 	int				num_philos;
-// 	int				num_times_eat;
-// 	int				*dead;
-// 	pthread_mutex_t	*r_fork;
-// 	pthread_mutex_t *l_fork;
-// 	pthread_mutex_t	*write_lock;
-// 	pthread_mutex_t *dead_lock;
-// 	pthread_mutex_t *meal_lock;
-// }				t_philo;
-
-// typedef struct	s_program
-// {
-// 	int				dead_flag;
-// 	pthread_mutex_t	dead_lock;
-// 	pthread_mutex_t meal_lock;
-// 	pthread_mutex_t	write_lock;
-// 	t_philo			*philos;
-// }				t_program;
+typedef enum s_status
+{
+	EAT,
+	SLEEP,
+	THINK,
+	LEFT_FORK,
+	RIGHT_FORK,
+	DIED
+}			t_status;
 
 void     cleanup_table(t_table *t, int forks_inited, int end_inited);
 int			ft_atoi(const char *str, int *error);

@@ -1,4 +1,15 @@
-/*  */
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/14 15:24:34 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/14 18:20:40 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void *safe_malloc(size_t bytes)
@@ -75,6 +86,7 @@ int	init_table(t_table *t, int ac, char **av)
 	t->forks = NULL;
 	t->philos = NULL;
 	t->end = 0;
+	t->all_thread_ready = 0;
 	if (parse_args(t, ac, av))
 		return (1);
 	t->start_time = get_current_time();
