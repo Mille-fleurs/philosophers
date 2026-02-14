@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:30:02 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 15:53:01 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/14 20:54:22 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,3 +42,4 @@ int	ft_atoi(const char *str, int *error)
 		return (set_error(error));
 	return ((int)result);
 }
+

@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:52 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 18:49:44 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/14 22:01:35 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,10 @@ void	handle_thread_error(int status, t_op op)
 		error_msg("Thread operation error.\n");
 }
 
-int safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg, t_op op)
+int	safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg,
+		t_op op)
 {
-	int status;
+	int	status;
 
 	if (op == CREATE)
 		status = pthread_create(t, NULL, routine, arg);
@@ -45,7 +46,7 @@ int safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg, t_op o
 	if (status != 0)
 	{
 		handle_thread_error(status, op);
-		return (1);
+		return (0);
 	}
-	return (0);
+	return (1);
 }

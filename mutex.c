@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:49 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 18:49:26 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/14 21:56:05 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,12 +44,12 @@ int safe_mutex_handle( t_fork *f, t_op code)
 	else if (code == DESTROY)
 		status = pthread_mutex_destroy(&f->mtx);
 	else
-		return (1);
+		return (0);
 	if (status != 0)
 	{
 		handle_mutex_error(status, code);
-		return (1);
+		return (0);
 	}
-	return (0);
+	return (1);
 }
 
