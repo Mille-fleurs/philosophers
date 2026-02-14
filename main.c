@@ -18,7 +18,7 @@
 //        void *restrict arg);
 
 // typedef	struct s_mtx
-// {
+// {/*  */
 // 	pthread_mutex_t	l_fork;
 // 	pthread_mutex_t	r_fork;
 // }						t_mtx;
