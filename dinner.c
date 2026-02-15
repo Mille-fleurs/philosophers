@@ -88,7 +88,7 @@ void	only_one_philo(t_table *t)
 	cleanup_table(t, t->philo_num, 0);
 }
 
-int		wait_all_thread(t_table *t)
+int		wait_threads_ready(t_table *t)
 {
 	int	i;
 
@@ -150,7 +150,7 @@ void    *dinner_simulation(void *data)
     t_philo *p;
 
     p = (t_philo *)data;
-	return (void *)p;
+	return (NULL);
 }
 
 int    dinner_start(t_table *t)
@@ -160,7 +160,7 @@ int    dinner_start(t_table *t)
     i = -1;
     while (++i < t->philo_num)
     {
-        if (safe_thread_handle(&t->philos[i].thread_id, dinner_simulation, &t->philos[i], CREATE) == 1)
+        if (!safe_thread_handle(&t->philos[i].thread_id, dinner_simulation, &t->philos[i], CREATE))
             return (0);
     }
     t->start_time = get_currnt_time();
@@ -170,5 +170,6 @@ int    dinner_start(t_table *t)
         if (safe_mutex_handle(&t->forks[i].mtx, INIT) == 1)
 			return (0);
 	}
+	set_int(&t->table_mutex, &t->threads_ready, 1);
     return (1);
 }
