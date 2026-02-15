@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:24:34 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 22:01:29 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/15 21:07:36 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ void	init_philo(t_table *t)
 		p->id = i + 1;
 		p->is_full = 0;
 		p->meals_eaten = 0;
+		p->f_num = 0;
 		p->table = t;
 		p->last_meal_time = t->start_time;
 		assign_forks(p, t->forks, i);
@@ -86,26 +87,26 @@ int	init_table(t_table *t, int ac, char **av)
 	t->forks = NULL;
 	t->philos = NULL;
 	t->end = 0;
-	t->all_thread_ready = 0;
+	t->threads_ready = 0;
 	if (!parse_args(t, ac, av))
 		return (0);
 	t->start_time = get_current_time();
-	if (!safe_mutex_handle(t->table_mutex, INIT)
+	if (!safe_mutex_handle(&t->table_mutex, INIT)
 		|| !safe_mutex_handle(&t->end_mutex, INIT))
 		return (0);
 	t->forks = safe_malloc(t->philo_num * sizeof(t_fork));
 	if (!t->forks)
-		return (cleanup_table(t, 0, 1), 1);
+		return (cleanup_table(t, 0), 1);
 	t->philos = safe_malloc(t->philo_num * sizeof(t_philo));
 	if (!t->philos)
-		return (cleanup_table(t, 0, 1), 1);
+		return (cleanup_table(t, 0), 1);
 	i = -1;
 	while (++i < t->philo_num)
 	{
 		t->forks[i].id = i;
 		t->forks[i].taken = 0;
-		if (!safe_mutex_handle(&t->forks[i], INIT))
-			return (cleanup_table(t, i, 1), 1);
+		if (!safe_mutex_handle(&t->forks[i].mtx, INIT))
+			return (cleanup_table(t, i), 1);
 	}
 	init_philo(t);
 	return (0);

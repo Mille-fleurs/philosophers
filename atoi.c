@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:30:02 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 20:54:22 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/15 20:27:58 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,8 +21,8 @@ static int	set_error(int *error)
 
 int	ft_atoi(const char *str, int *error)
 {
-	long result;
-	int has_digit;
+	long	result;
+	int		has_digit;
 
 	result = 0;
 	while ((*str >= 9 && *str <= 13) || *str == ' ')
@@ -42,4 +42,3 @@ int	ft_atoi(const char *str, int *error)
 		return (set_error(error));
 	return ((int)result);
 }
-

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   set_get.c                                          :+:      :+:    :+:   */
+/*   setter_getter.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:23:57 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 22:01:32 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/15 21:07:44 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,5 +57,5 @@ int get_long_log(pthread_mutex_t *mtx, long long *value)
 
 int		simulation_finished(t_table *t)
 {
-	return (get_int(t->table_mutex, &t->end));
+	return (get_int(&t->table_mutex, &t->end));
 }

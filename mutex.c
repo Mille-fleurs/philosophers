@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:49 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 21:56:05 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/15 21:07:31 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,18 @@ void	handle_mutex_error(int status, t_op op)
 	return ;
 }
 
-int safe_mutex_handle( t_fork *f, t_op code)
+int safe_mutex_handle( pthread_mutex_t *mtx, t_op code)
 {
 	int status;
 
 	if (code == LOCK)
-		status = pthread_mutex_lock(&f->mtx);
+		status = pthread_mutex_lock(mtx);
 	else if (code == UNLOCK)
-		status = pthread_mutex_unlock(&f->mtx);
+		status = pthread_mutex_unlock(mtx);
 	else if (code == INIT)
-		status = pthread_mutex_init(&f->mtx, NULL);
+		status = pthread_mutex_init(mtx, NULL);
 	else if (code == DESTROY)
-		status = pthread_mutex_destroy(&f->mtx);
+		status = pthread_mutex_destroy(mtx);
 	else
 		return (0);
 	if (status != 0)
@@ -52,4 +52,3 @@ int safe_mutex_handle( t_fork *f, t_op code)
 	}
 	return (1);
 }
-

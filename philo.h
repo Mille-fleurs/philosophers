@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 21:52:59 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/15 21:07:16 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ typedef struct s_philo
 	int id; // 1..N
 	int					is_full;
 	int					meals_eaten;
-	int					fork_num;
+	int					f_num;
 	t_fork				*first_f;
 	t_fork				*second_f;
 	long long			last_meal_time;
@@ -51,12 +51,13 @@ typedef struct s_table
 	int					t_die;
 	int					t_eat;
 	int					t_sleep;
-	int 				meal_num; // FLAG if -1
-	int 				end;      // someone died or ate enoughS
-	int					all_thread_ready;
+	int 				meal_num; // FLAG if -1, number of time each philos must eat
+	int 				end;      // someone died or ate enough(all philos eaten their meal_num)
+	int					threads_ready;
 	long long			start_time;
 	pthread_mutex_t		table_mutex;
 	pthread_mutex_t		end_mutex;
+	pthread_t			monitor;
 	t_fork				*forks;
 	t_philo				*philos;
 }						t_table;
@@ -74,14 +75,15 @@ typedef enum s_op
 
 typedef enum s_status
 {
-	EAT,
-	SLEEP,
-	THINK,
-	LEFT_FORK,
-	RIGHT_FORK,
+	EATING,
+	SLEEPING,
+	THINKING,
+	GOT_FORK_1,
+	GOT_FORK_2,
 	DIED
 }						t_status;
 
+void					*philosopher(void *data);
 int						error_msg(char *str);
 void					handle_thread_error(int status, t_op op);
 int						safe_thread_handle(pthread_t *t,
@@ -90,10 +92,11 @@ void					handle_mutex_error(int status, t_op op);
 int						safe_thread_handle(pthread_t *t,
 							void *(*routine)(void *), void *arg, t_op op);
 int						set_int(pthread_mutex_t *mtx, int *dest, int value);
+int						get_int(pthread_mutex_t *mtx, int *value);
 int						set_long_long(pthread_mutex_t *mtx, long long *dest,
 							long long value);
-void					cleanup_table(t_table *t, int forks_inited,
-							int end_inited);
+int						get_long_log(pthread_mutex_t *mtx, long long *value);
+void					cleanup_table(t_table *t, int forks_inited);
 int						ft_atoi(const char *str, int *error);
 int						ft_strlen(char *str);
 size_t					get_current_time(void);
