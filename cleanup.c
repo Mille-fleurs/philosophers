@@ -12,34 +12,42 @@
 
 #include "philo.h"
 
-void	cleanup_table(t_table *t, int forks_inited)
-{
-	int	i;
-
-	if (!t)
-		return ;
-	if (t->philos)
-		free(t->philos);
-	if (!destroy_mutexes(t, forks_inited))
-		return ;
-	t->philos = NULL;
-	t->forks = NULL;
-}
-
 int	destroy_mutexes(t_table *t, int forks_inited)
 {
 	int i;
 
+	if (!t)
+		return (0);
 	if (t->forks)
 	{
 		i = -1;
 		while (++i < forks_inited)
 		{
-			if (!safe_mutex_handle(t->forks[i].mtx, DESTROY))
-				return (cleanup_table(t, forks_inited), 0);
+			if (!safe_mutex_handle(t->forks[i].mutex, DESTROY))
+				return (0);
 		}
-		free(t->forks);
 	}
-	if (!safe_mutex_handle(&t->end_mutex) || !safe_mutex_handle(&t->table_mutex))
-		return (cleanup_table(t, forks_inited), 0);
+	if (!safe_mutex_handle(&t->end_mutex, DESTROY))
+		return (0);
+	if (!safe_mutex_handle(&t->table_mutex, DESTROY))
+		return (0);
 }
+
+void	cleanup_table(t_table *t, int forks_inited)
+{
+	if (!t)
+		return ;
+	if (!destroy_mutexes(t, forks_inited))
+		return ;
+	if (t->forks)
+	{
+		free(t->forks);
+		t->forks = NULL;
+	}
+	if (t->philos)
+	{
+		free(t->philos);
+		t->philos = NULL;
+	}
+}
+

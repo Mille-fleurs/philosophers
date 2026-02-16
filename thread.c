@@ -50,3 +50,4 @@ int	safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg,
 	}
 	return (1);
 }
+

@@ -10,39 +10,16 @@
 
 void	only_one_philo(t_table *t)
 {	
-	usleep(t->t_die + 10);
-	print_status(1, DIED);
+	ft_usleep((t->t_die + 10));
+	print_status(t->start_time, 1, DIED);
 	cleanup_table(t, 1);
 }
 
-int		wait_threads_ready(t_table *t)
-{
-	int	i;
-
-	i = -1;
-	while (++i < t->philo_num)
-	{
-		if (!safe_thread_handle(&t->philos[i].thread_id, philosopher, JOIN))
-			return (1);
-	}
-	return (0);
-}
 // Take forks 
 // Eat
 // Sleep 
 // Think 
 // Repeat
-
-// int monitor_end(t_table *t, t_philo *p, t_status code)
-// {
-// 	if (code == EAT)
-// 	{
-// 		if (t->meal_num != -1 && t->meal_num == p->meals_eaten)
-// 		{
-// 			if (set_int())
-// 		}
-// 	}
-// }
 
 int	take_fork(t_table *t, t_philo *p, int p_index)
 {
@@ -54,14 +31,19 @@ int	take_fork(t_table *t, t_philo *p, int p_index)
 	else
 		f_index = (p_index + 1) % t->philo_num;
 	f = t->forks[f_index];
-	if (set_int(&f.mtx, &f.taken, 1) == 1)
+	if (set_int(&f.mutex, &f.taken, 1) == 1)
 		return (1);
-	if (set_int(&f.mtx, &p->f_num, p->f_num + 1))
+	if (set_int(&f.mutex, &p->f_num, p->f_num + 1))
 		return (1);
 	return (0);
 }
 
-int eat(t_table *t, t_philo *p, int p_index)
+void sleep_routine(t_table *t)
+{
+
+}
+
+int eat_routine(t_table *t, t_philo *p, int p_index)
 {
 	if (p->f_num == 2)
 		print_status(p_index, EATING);
@@ -69,6 +51,8 @@ int eat(t_table *t, t_philo *p, int p_index)
 
 
 }
+
+int	think_routine(t_table *t)
 
 void    *philosopher(void *data)
 {

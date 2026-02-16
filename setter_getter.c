@@ -22,19 +22,19 @@ int	set_int(pthread_mutex_t *mtx, int *dest, int value)
 	return (1);
 }
 
-int get_int(pthread_mutex_t *mtx, int *value)
+int get_int(pthread_mutex_t *mtx, int *src)
 {
 	int ret;
 
 	if (!safe_mutex_handle(mtx, LOCK))
 		return (-1);
-	ret = *value;
+	ret = *src;
 	if (!safe_mutex_handle(mtx, UNLOCK))
 		return (-1);
 	return (ret);
 }
 
-int	set_long_long(pthread_mutex_t *mtx, long long *dest, long long value)
+int	set_long(pthread_mutex_t *mtx, long *dest, long value)
 {
 	if (!safe_mutex_handle(mtx, LOCK))
 		return (0);
@@ -44,18 +44,25 @@ int	set_long_long(pthread_mutex_t *mtx, long long *dest, long long value)
 	return (1);
 }
 
-int get_long_log(pthread_mutex_t *mtx, long long *value)
+long get_long(pthread_mutex_t *mtx, long *src)
 {
-	long long ret;
+	long ret;
 
 	if (!safe_mutex_handle(mtx, LOCK))
-		return (0);
-	ret = *value;
+		return (-1);
+	ret = *src;
 	if (!safe_mutex_handle(mtx, UNLOCK))
-		return (0);
+		return (-1);
+	return (ret);
 }
 
 int		simulation_finished(t_table *t)
 {
-	return (get_int(&t->table_mutex, &t->end));
+	int ret;
+
+	ret = get_int(&t->end_mutex, &t->end);
+	if (ret < 0)
+		return (1);
+	return (ret);
 }
+

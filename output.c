@@ -12,19 +12,22 @@
 
 #include "philo.h"
 
-void	write_status(long long start, int p_index, t_status code)
+void	print_status(t_table *t, int p_index, t_status code)
 {
     long long time;
 
-    time = get_current_time() - start;
+	if (!safe_mutex_handle(&t->print_mutex, LOCK))
+		return ;
+    time = (long long)(get_current_time() - t->start_time);
 	if (code == EATING)
-		printf("%ld %d is eating\n", time, p_index);
+		printf("%lld %d is eating\n", time, p_index);
 	else if (code == SLEEPING)
-		printf("%ld %d is sleeping\n", time, p_index);
+		printf("%lld %d is sleeping\n", time, p_index);
 	else if (code == THINKING)
-		printf("%ld %d is thinking\n", time, p_index);
+		printf("%lld %d is thinking\n", time, p_index);
 	else if (code == GOT_FORK_1 || code == GOT_FORK_2)
-		printf("%ld %d has taken a fork\n", time, p_index);
+		printf("%lld %d has taken a fork\n", time, p_index);
 	else if (code == DIED)
-		printf("%ld %d died\n", time, p_index);
+		printf("%lld %d died\n", time, p_index);
+	safe_mutex_handle(&t->print_mutex, UNLOCK);
 }

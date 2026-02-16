@@ -39,23 +39,20 @@ void	assign_forks(t_philo *p, t_fork *f, int pos)
 	}
 }
 
-void	init_philo(t_table *t)
+int	init_philo(t_table *t, int index)
 {
-	int		i;
-	t_philo	*p;
+	t_philo *p;
 
-	i = -1;
-	while (++i < t->philo_num)
-	{
-		p = &t->philos[i];
-		p->id = i + 1;
-		p->is_full = 0;
-		p->meals_eaten = 0;
-		p->f_num = 0;
-		p->table = t;
-		p->last_meal_time = t->start_time;
-		assign_forks(p, t->forks, i);
-	}
+	p = &t->philos[index];
+	if (!safe_mutex_handle(&p->philo_mutex, INIT))
+		return (0);
+	p->id = index + 1;
+	p->is_full = 0;
+	p->meals_eaten = 0;
+	p->table = t;
+	p->last_meal_time = 0;
+	assign_forks(p, t->forks, index);
+	return (1);
 }
 
 int	parse_args(t_table *t, int ac, char **av)
@@ -90,24 +87,29 @@ int	init_table(t_table *t, int ac, char **av)
 	t->threads_ready = 0;
 	if (!parse_args(t, ac, av))
 		return (0);
-	t->start_time = get_current_time();
 	if (!safe_mutex_handle(&t->table_mutex, INIT)
-		|| !safe_mutex_handle(&t->end_mutex, INIT))
+		|| !safe_mutex_handle(&t->end_mutex, INIT)
+		|| !safe_mutex_handle(&t->print_mutex, INIT))
 		return (0);
 	t->forks = safe_malloc(t->philo_num * sizeof(t_fork));
 	if (!t->forks)
-		return (cleanup_table(t, 0), 1);
+		return (cleanup_table(t, 0), 0);
 	t->philos = safe_malloc(t->philo_num * sizeof(t_philo));
 	if (!t->philos)
-		return (cleanup_table(t, 0), 1);
+		return (cleanup_table(t, 0), 0);
 	i = -1;
 	while (++i < t->philo_num)
 	{
 		t->forks[i].id = i;
 		t->forks[i].taken = 0;
-		if (!safe_mutex_handle(&t->forks[i].mtx, INIT))
-			return (cleanup_table(t, i), 1);
+		if (!safe_mutex_handle(&t->forks[i].mutex, INIT))
+			return (cleanup_table(t, i), 0);
 	}
-	init_philo(t);
-	return (0);
+	i = -1;
+	while (++i < t->philo_num)
+	{
+		if (!init_philo(t, i))
+			return (cleanup_table(t, t->philo_num), 0);
+	}
+	return (1);
 }

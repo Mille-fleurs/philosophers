@@ -27,7 +27,7 @@ typedef struct s_table	t_table;
 
 typedef struct s_fork
 {
-	pthread_mutex_t		mtx;
+	pthread_mutex_t		mutex;
 	int					id;
 	int					taken;
 }						t_fork;
@@ -37,26 +37,27 @@ typedef struct s_philo
 	int id; // 1..N
 	int					is_full;
 	int					meals_eaten;
-	int					f_num;
 	t_fork				*first_f;
 	t_fork				*second_f;
-	long long			last_meal_time;
+	long				last_meal_time;
 	pthread_t			thread_id;
+	pthread_mutex_t		philo_mutex;
 	t_table				*table;
 }						t_philo;
 
 typedef struct s_table
 {
 	int					philo_num;
-	int					t_die;
+	long					t_die;
 	int					t_eat;
 	int					t_sleep;
 	int 				meal_num; // FLAG if -1, number of time each philos must eat
 	int 				end;      // someone died or ate enough(all philos eaten their meal_num)
 	int					threads_ready;
-	long long			start_time;
+	long				start_time;
 	pthread_mutex_t		table_mutex;
 	pthread_mutex_t		end_mutex;
+	pthread_mutex_t		print_mutex;
 	pthread_t			monitor;
 	t_fork				*forks;
 	t_philo				*philos;
@@ -84,6 +85,8 @@ typedef enum s_status
 }						t_status;
 
 void					*philosopher(void *data);
+void					print_status(t_table *t, int p_index, t_status code);
+int     				monitor(t_table *t);
 int						error_msg(char *str);
 void					handle_thread_error(int status, t_op op);
 int						safe_thread_handle(pthread_t *t,
@@ -93,9 +96,8 @@ int						safe_thread_handle(pthread_t *t,
 							void *(*routine)(void *), void *arg, t_op op);
 int						set_int(pthread_mutex_t *mtx, int *dest, int value);
 int						get_int(pthread_mutex_t *mtx, int *value);
-int						set_long_long(pthread_mutex_t *mtx, long long *dest,
-							long long value);
-int						get_long_log(pthread_mutex_t *mtx, long long *value);
+int						set_long(pthread_mutex_t *mtx, long *dest, long value);
+int						get_long(pthread_mutex_t *mtx, long *value);
 void					cleanup_table(t_table *t, int forks_inited);
 int						ft_atoi(const char *str, int *error);
 int						ft_strlen(char *str);

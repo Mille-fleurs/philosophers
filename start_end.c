@@ -16,37 +16,46 @@ int    start_simulation(t_table *t)
 {
     int     i;
 
-    i = -1;
     t->start_time = get_current_time() + (t->philo_num * 2 * 10);
+    i = -1;
+    while (++i < t->philo_num)
+    {
+        if (!set_long(&t->philos[i].philo_mutex, &t->philos[i].last_meal_time, t->start_time))
+            return (0);
+    }
+    i = -1;
     while (++i < t->philo_num)
     {
         if (!safe_thread_handle(&t->philos[i].thread_id, philosopher, &t->philos[i], CREATE))
             return (cleanup_table(t, t->philo_num), 0);
     }
-    if (i < t->philo_num)
+    if (t->philo_num > 1)
     {
-        if (!safe_thread_handle(&t->monitor, monitor, &t, CREATE))
+        if (!safe_thread_handle(&t->monitor, monitor, t, CREATE))
             return (cleanup_table(t, t->philo_num), 0);
     }
     i = -1;
-    while (++i < t->philo_num)
-    {
-        if (!safe_mutex_handle(&t->forks[i].mtx, INIT))
-			return (cleanup_table(t, t->philo_num), 0);
-	}
 	set_int(&t->table_mutex, &t->threads_ready, 1);
     return (1);
 }
 
-int     stop_simulation(t_table *t)
+int     stop_simulation(t_table *t, int forks_inited)
 {
     int     i;
 
+    if (!t)
+        return (0);
     i = -1;
     while (++i < t->philo_num)
     {
-        if (!safe_thread_handle(&t->philos[i].thread_id, philosopher, &t->philos[i], JOIN))
-            return (cleanup_table(t, t->philo_num), 0);
+        if (!safe_thread_handle(&t->philos[i].thread_id, NULL, NULL, JOIN))
+            return (cleanup_table(t, forks_inited), 0);
     }
+    if (t->philo_num > 1)
+    {
+        if (!safe_thread_handle(&t->monitor, NULL, NULL, JOIN))
+            return (cleanup_table(t, forks_inited), 0);
+    }
+    cleanup_table(t, t->philo_num);
     return (1);
 }
