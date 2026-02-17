@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mutex.c                                            :+:      :+:    :+:   */
+/*   safe_handle.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:49 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/15 21:07:31 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/17 22:05:54 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,17 +17,17 @@ void	handle_mutex_error(int status, t_op op)
 	if (status == 0)
 		return ;
 	if (status == EINVAL)
-		error_msg("Invallide mutex.\n");
+		printf("Invallide mutex.\n");
 	else if (status == ENOMEM)
-		error_msg("Not enough memory for mutex.\n");
+		printf("Not enough memory for mutex.\n");
 	else if (status == EPERM && op == UNLOCK)
-		error_msg("Thread tried to unlock a mutex it does not own.\n");
+		printf("Thread tried to unlock a mutex it does not own.\n");
 	else if (status == EBUSY)
-		error_msg("Mutex busy (still locked/in use).\n");	
+		printf("Mutex busy (still locked/in use).\n");	
 	else if (status == EDEADLK)
-		error_msg("Deadlock detected.\n");
+		printf("Deadlock detected.\n");
 	else
-		error_msg("Mutex error.\n");
+		printf("Mutex error.\n");
 	return ;
 }
 
@@ -58,17 +58,17 @@ void	handle_thread_error(int status, t_op op)
 	if (status == 0)
 		return ;
 	if (status == EAGAIN && op == CREATE)
-		error_msg("Not enough resources to create thread.\n");
+		printf("Not enough resources to create thread.\n");
 	else if (status == EINVAL && op == CREATE)
-		error_msg("Invalid thread attributes.\n");
+		printf("Invalid thread attributes.\n");
 	else if (status == EINVAL && (op == JOIN || op == DETACH))
-		error_msg("Invalid thread (not joinable or invalid ID).\n");
+		printf("Invalid thread (not joinable or invalid ID).\n");
 	else if (status == ESRCH)
-		error_msg("NO thread with given ID exists.\n");
+		printf("NO thread with given ID exists.\n");
 	else if (status == EDEADLK && op == JOIN)
-		error_msg("Deadlock detected while joining thread.\n");
+		printf("Deadlock detected while joining thread.\n");
 	else
-		error_msg("Thread operation error.\n");
+		printf("Thread operation error.\n");
 }
 
 int	safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg,

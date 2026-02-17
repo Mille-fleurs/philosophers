@@ -6,23 +6,13 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:24:34 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/15 21:07:36 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/17 22:05:46 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	*safe_malloc(size_t bytes)
-{
-	void	*ret;
-
-	ret = malloc(bytes);
-	if (!ret)
-		return (NULL);
-	return (ret);
-}
-
-void	assign_forks(t_philo *p, t_fork *f, int pos)
+static void	assign_forks(t_philo *p, t_fork *f, int pos)
 {
 	int	n;
 
@@ -39,77 +29,98 @@ void	assign_forks(t_philo *p, t_fork *f, int pos)
 	}
 }
 
-int	init_philo(t_table *t, int index)
+static t_philo	*init_philo(t_table *t)
 {
 	t_philo *p;
+	int i;
 
-	p = &t->philos[index];
-	if (!safe_mutex_handle(&p->philo_mutex, INIT))
-		return (0);
-	p->id = index + 1;
-	p->is_full = 0;
-	p->meals_eaten = 0;
-	p->table = t;
-	p->last_meal_time = 0;
-	assign_forks(p, t->forks, index);
-	return (1);
+	t->philos = malloc(t->philo_num * sizeof(t_philo));
+	if (!t->philos)
+		return (cleanup_table(t, 0), NULL);
+	p = t->philos;
+	i = -1;
+	while (++i < t->philo_num)
+	{
+		if (!safe_mutex_handle(&p[i].philo_mutex, INIT))
+			return (0);
+		p[i].id = i + 1;
+		p[i].is_full = 0;
+		p[i].meals_eaten = 0;
+		p[i].table = t;
+		p[i].last_meal_time = 0;
+		assign_forks(p, t->forks, i);
+	}
+	return (p);
 }
 
-int	parse_args(t_table *t, int ac, char **av)
+static t_fork *init_fork(t_table *t)
 {
-	int	error;
+	t_fork *f;
+	int i;
 
-	error = 0;
-	t->philo_num = ft_atoi(av[1], &error);
-	t->t_die = ft_atoi(av[2], &error);
-	t->t_eat = ft_atoi(av[3], &error);
-	t->t_sleep = ft_atoi(av[4], &error);
-	if (ac == 6)
-		t->meal_num = ft_atoi(av[5], &error);
-	else
-		t->meal_num = -1;
-	if (error)
-		return (0);
-	if (t->philo_num <= 0 || t->t_die <= 0 || t->t_eat <= 0 || t->t_sleep <= 0)
-		return (0);
-	if (ac == 6 && t->meal_num <= 0)
-		return (0);
-	return (1);
+	t->forks = malloc(t->philo_num * sizeof(t_fork));
+	if (!t->forks)
+		return (cleanup_table(t, 0), NULL);
+	f = t->forks;
+	i = -1;
+	while (++i < t->philo_num)
+	{
+		if (!safe_mutex_handle(&f[i].mutex, INIT))
+			return (cleanup_table(t, i), NULL);
+		f[i].id = i;
+		f[i].taken = 0;
+	}
+	return (f);
 }
 
-int	init_table(t_table *t, int ac, char **av)
+void	parse_arg(t_table *t, int ac, char **av)
 {
 	int	i;
+	int	res;
+	int of;
 
+	i = 0;
+	res = 0;
+	of = 0;
+	while (++i < ac)
+	{
+		res = ft_atoi(av[i], &of);
+		if (i == 1)
+			t->philo_num = res;
+		if (i == 2)
+			t->t_die = res;
+		if (i == 3)
+			t->t_eat = res;
+		if (i == 4)
+			t->t_sleep = res;
+		if (ac == 5)
+			t->meal_num = -1;
+		else if (i == 5)
+			t->meal_num = res;
+	}
+}
+
+t_table *init_table(int ac, char **av)
+{
+	t_table *t;
+
+	t = malloc(sizeof(t_table) * 1);
+	if (!t)
+		return (NULL);
+	parse_arg(t, ac, av);
 	t->forks = NULL;
 	t->philos = NULL;
 	t->end = 0;
 	t->threads_ready = 0;
-	if (!parse_args(t, ac, av))
-		return (0);
 	if (!safe_mutex_handle(&t->table_mutex, INIT)
 		|| !safe_mutex_handle(&t->end_mutex, INIT)
 		|| !safe_mutex_handle(&t->print_mutex, INIT))
-		return (0);
-	t->forks = safe_malloc(t->philo_num * sizeof(t_fork));
+		return (NULL);
+	t->forks = init_fork(t);
 	if (!t->forks)
-		return (cleanup_table(t, 0), 0);
-	t->philos = safe_malloc(t->philo_num * sizeof(t_philo));
+		return (cleanup_table(t, t->philo_num), NULL);
+	t->philos = init_philo(t);
 	if (!t->philos)
-		return (cleanup_table(t, 0), 0);
-	i = -1;
-	while (++i < t->philo_num)
-	{
-		t->forks[i].id = i;
-		t->forks[i].taken = 0;
-		if (!safe_mutex_handle(&t->forks[i].mutex, INIT))
-			return (cleanup_table(t, i), 0);
-	}
-	i = -1;
-	while (++i < t->philo_num)
-	{
-		if (!init_philo(t, i))
-			return (cleanup_table(t, t->philo_num), 0);
-	}
-	return (1);
+		return (cleanup_table(t, t->philo_num), NULL);
+	return (t);
 }

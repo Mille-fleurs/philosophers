@@ -52,7 +52,13 @@ void	only_one_philo(t_table *t)
 
 // }
 
-// int	think_routine(t_table *t)
+int	think_routine(t_table *t)
+{
+	int t_think;
+
+	
+
+}
 
 void    *philosopher(void *data)
 {
@@ -64,4 +70,3 @@ void    *philosopher(void *data)
 	print_status(p->table, p->id, THINKING);
 	return (NULL);
 }
-

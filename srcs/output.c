@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 18:54:18 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/15 21:07:40 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/17 18:15:23 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,3 +31,4 @@ void	print_status(t_table *t, int p_index, t_status code)
 		printf("%lld %d died\n", time, p_index);
 	safe_mutex_handle(&t->print_mutex, UNLOCK);
 }
+

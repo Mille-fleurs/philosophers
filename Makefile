@@ -13,7 +13,7 @@ SRCS    = srcs/main.c \
 		  srcs/output.c \
 		  srcs/set_get.c \
 		  srcs/safe_handle.c \
-		  srcs/atoi.c \
+		  srcs/parsing.c \
 		  srcs/error.c \
 		  srcs/utils.c
 

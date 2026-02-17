@@ -6,23 +6,38 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/15 21:07:16 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/17 22:05:59 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PHILO_H
-# define PHILO_h
+# define PHILO_H
 
 # include <errno.h>
 # include <limits.h>
 # include <pthread.h>
 # include <stdio.h>
-# include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/time.h>
+# include <unistd.h>
 
-# define ERR_USAGE "Usage: ./philo number_of_philosopher time_to_die time_to_eat time_to_sleep [number_of_times]"
+# define MAX_PHILO 250
+# define STR_MAX_PHILO "250"
+# define STR_PROG_NAME "philo:"
+# define STR_USAGE \
+	"%s usage: ./philo <number_of_philosophers> \
+<time_to_die> <time_to_eat> <time_to_sleep> \
+[number_of_times_each_philosopher_must_eat]\n"
+# define STR_ERR_INPUT_DIGIT \
+	"%s invalid input: %s: \
+not a valid unsigned integer between 0 and 2147483647.\n"
+# define STR_ERR_INPUT_POFLOW \
+	"%s invalid input: \
+there must be between 1 and %s philosophers.\n"
+# define STR_ERR_THREAD "%s error: Could not create thread.\n"
+# define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
+# define STR_ERR_MUTEX "%s error: Could not create mutex.\n"
 
 typedef struct s_table	t_table;
 
@@ -35,7 +50,7 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int 				id; // 1..N
+	int id; // 1..N
 	int					is_full;
 	int					meals_eaten;
 	t_fork				*first_f;
@@ -49,11 +64,11 @@ typedef struct s_philo
 typedef struct s_table
 {
 	int					philo_num;
-	long					t_die;
+	int					t_die;
 	int					t_eat;
 	int					t_sleep;
-	int 				meal_num; // FLAG if -1, number of time each philos must eat
-	int 				end;      // someone died or ate enough(all philos eaten their meal_num)
+	int meal_num; // FLAG if -1, number of time each philos must eat
+	int end;      // someone died or ate enough(all philos eaten their meal_num)
 	int					threads_ready;
 	long				start_time;
 	pthread_mutex_t		table_mutex;
@@ -85,28 +100,27 @@ typedef enum s_status
 	DIED
 }						t_status;
 
-int    					start_simulation(t_table *t);
-int     				stop_simulation(t_table *t, int forks_inited);
+int						start_simulation(t_table *t);
+int						stop_simulation(t_table *t, int forks_inited);
 void					only_one_philo(t_table *t);
 void					*philosopher(void *data);
 void					print_status(t_table *t, int p_index, t_status code);
-void    				*monitor(void *data);
-void					*safe_malloc(size_t bytes);
-void					assign_forks(t_philo *p, t_fork *f, int pos);
-int						init_philo(t_table *t, int index);
-int						parse_args(t_table *t, int ac, char **av);
-int						init_table(t_table *t, int ac, char **av);
+void					*monitor(void *data);
+int						is_valid_arg(int ac, char **av);
+void					parse_arg(t_table *t, int ac, char **av);
+t_table					*init_table(int ac, char **av);
 void					handle_mutex_error(int status, t_op op);
-int 					safe_mutex_handle(pthread_mutex_t *mtx, t_op code);
+int						safe_mutex_handle(pthread_mutex_t *mtx, t_op code);
 void					handle_thread_error(int status, t_op op);
-int						safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg, t_op op);
+int						safe_thread_handle(pthread_t *t,
+							void *(*routine)(void *), void *arg, t_op op);
 int						set_int(pthread_mutex_t *mtx, int *dest, int value);
 int						get_int(pthread_mutex_t *mtx, int *value);
 int						set_long(pthread_mutex_t *mtx, long *dest, long value);
 long					get_long(pthread_mutex_t *mtx, long *value);
 void					cleanup_table(t_table *t, int forks_inited);
-int						error_msg(char *str);
-int						ft_atoi(const char *str, int *error);
+int						error_msg(char *str, char *detail, int ret);
+int						ft_atoi(const char *str, int *of);
 int						ft_strlen(char *str);
 size_t					get_current_time(void);
 int						ft_usleep(size_t milliseconds);

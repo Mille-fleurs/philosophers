@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup.c                                          :+:      :+:    :+:   */
+/*   error.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:24:05 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/15 21:07:10 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/17 19:11:12 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	error_msg(char *str)
+int	error_msg(char *str, char *detail, int ret)
 {
-	write(2, str, ft_strlen(str));
-	write(2, "\n", 1);
-	return (1);
+	if (!detail)
+		printf(str, STR_PROG_NAME);
+	else
+		printf(str, STR_PROG_NAME, detail);
+	return (ret);
 }
 
-static int	destroy_mutexes(t_table *t, int forks_inited)
+int	destroy_mutexes(t_table *t, int forks_inited)
 {
 	int i;
 
@@ -46,7 +48,7 @@ static int	destroy_mutexes(t_table *t, int forks_inited)
 	return (1);
 }
 
-void	cleanup_table(t_table *t, int forks_inited)
+void 	cleanup_table(t_table *t, int forks_inited)
 {
 	if (!t)
 		return ;

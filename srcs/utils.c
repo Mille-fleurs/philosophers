@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:01:43 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/14 21:36:17 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/17 15:44:08 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,16 @@ int	ft_strlen(char *str)
 		len++;
 	return (len);
 }
+
+// void	*safe_malloc(size_t bytes)
+// {
+// 	void	*ret;
+
+// 	ret = malloc(bytes);
+// 	if (!ret)
+// 		return (NULL);
+// 	return (ret);
+// }
 
 size_t	get_current_time(void)
 {
@@ -40,3 +50,4 @@ int		ft_usleep(size_t milliseconds)
 		usleep(100);
 	return (0);
 }
+
