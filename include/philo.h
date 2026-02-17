@@ -17,6 +17,7 @@
 # include <limits.h>
 # include <pthread.h>
 # include <stdio.h>
+# include <unistd.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/time.h>
@@ -34,7 +35,7 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int id; // 1..N
+	int 				id; // 1..N
 	int					is_full;
 	int					meals_eaten;
 	t_fork				*first_f;
@@ -84,23 +85,30 @@ typedef enum s_status
 	DIED
 }						t_status;
 
+int    					start_simulation(t_table *t);
+int     				stop_simulation(t_table *t, int forks_inited);
+void					only_one_philo(t_table *t);
 void					*philosopher(void *data);
 void					print_status(t_table *t, int p_index, t_status code);
-int     				monitor(t_table *t);
-int						error_msg(char *str);
-void					handle_thread_error(int status, t_op op);
-int						safe_thread_handle(pthread_t *t,
-							void *(*routine)(void *), void *arg, t_op op);
+void    				*monitor(void *data);
+void					*safe_malloc(size_t bytes);
+void					assign_forks(t_philo *p, t_fork *f, int pos);
+int						init_philo(t_table *t, int index);
+int						parse_args(t_table *t, int ac, char **av);
+int						init_table(t_table *t, int ac, char **av);
 void					handle_mutex_error(int status, t_op op);
-int						safe_thread_handle(pthread_t *t,
-							void *(*routine)(void *), void *arg, t_op op);
+int 					safe_mutex_handle(pthread_mutex_t *mtx, t_op code);
+void					handle_thread_error(int status, t_op op);
+int						safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg, t_op op);
 int						set_int(pthread_mutex_t *mtx, int *dest, int value);
 int						get_int(pthread_mutex_t *mtx, int *value);
 int						set_long(pthread_mutex_t *mtx, long *dest, long value);
-int						get_long(pthread_mutex_t *mtx, long *value);
+long					get_long(pthread_mutex_t *mtx, long *value);
 void					cleanup_table(t_table *t, int forks_inited);
+int						error_msg(char *str);
 int						ft_atoi(const char *str, int *error);
 int						ft_strlen(char *str);
 size_t					get_current_time(void);
+int						ft_usleep(size_t milliseconds);
 
 #endif

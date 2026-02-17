@@ -16,36 +16,60 @@
 // detecting if all philosophers have eaten enough (if meal_num is set)
 // stopping the simulation safely
 
-void    kill_philo(t_table *t, int p_id)
+static void    kill_philo(t_table *t, int p_id)
 {
-    print_status(t->start_time, p_id, DIED);
+    print_status(t, p_id, DIED);
     set_int(&t->end_mutex, &t->end, 1);
 }
 
-int     monitor(t_table *t)
+static int     is_dead(t_table *t, t_philo *p)
 {
-    int i;
-    int is_full;
-    int full_count;
     long curr_time;
     long last_meal_time;
 
+    curr_time = get_current_time();
+    last_meal_time = get_long(&p->philo_mutex, &p->last_meal_time);
+    if (curr_time - last_meal_time >= t->t_die)
+        return (1);
+    return (0);
+}
+
+static int      is_full(t_table *t, t_philo *p, int *full_count)
+{
+    int is_full;
+
+    is_full = get_int(&p->philo_mutex, &p->is_full);
+    if (is_full == 1)
+        (*full_count)++;
+    if (*full_count == t->philo_num)
+        return (1);
+    return (0);
+}
+
+void     *monitor(void *data)
+{
+    int i;
+    int full_count;
+    t_table *t;
+
+    t = (t_table *)data;
     while (!get_int(&t->end_mutex, &t->end))
     {
         i = -1;
         full_count = 0;
         while (++i < t->philo_num)
         {
-            is_full = get_int(&t->philos[i].philo_mutex, &t->philos[i].is_full);
-            if (is_full == 1)
-                full_count++;
-            curr_time = get_current_time();
-            last_meal_time = get_long(&t->philos[i].philo_mutex, &t->philos[i].last_meal_time);
-            if (curr_time - last_meal_time >= t->t_die)
-                return (kill_philo(t, i + 1), 0);
-            if (full_count == t->philo_num)
-                return (set_int(&t->end_mutex, &t->end, 1), 0);
+            if (is_full(t, &t->philos[i], &full_count))
+            {
+                set_int(&t->end_mutex, &t->end, 1);
+                return (NULL);
+            }
+            if (is_dead(t, &t->philos[i]))
+            {
+                kill_philo(t, i + 1);
+                return (NULL);
+            }
         }
     }
-    return (1);
+    return (data);
 }

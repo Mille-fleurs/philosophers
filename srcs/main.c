@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   start_end.c                                        :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/15 18:56:20 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/15 21:06:48 by chitoupa         ###   ########.fr       */
+/*   Created: 2026/01/28 08:51:46 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/15 21:07:25 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,3 +59,17 @@ int     stop_simulation(t_table *t, int forks_inited)
     cleanup_table(t, t->philo_num);
     return (1);
 }
+
+int	main(int ac, char **av)
+{
+	t_table	t;
+
+	if (ac != 5 || ac != 6)
+		return (error_msg(ERR_USAGE));
+	if (!init_table(&t, ac, av))
+		return (1);
+	return (0);
+}
+
+// dinner_start
+// end with no leak -> philos full | | 1 philo died

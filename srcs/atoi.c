@@ -25,6 +25,7 @@ int	ft_atoi(const char *str, int *error)
 	int		has_digit;
 
 	result = 0;
+	has_digit = 0;
 	while ((*str >= 9 && *str <= 13) || *str == ' ')
 		str++;
 	if (*str == '-' || *str == '+')

@@ -64,7 +64,7 @@ int	parse_args(t_table *t, int ac, char **av)
 	t->t_die = ft_atoi(av[2], &error);
 	t->t_eat = ft_atoi(av[3], &error);
 	t->t_sleep = ft_atoi(av[4], &error);
-	if (ac == 6 && check_brakets(av[5]))
+	if (ac == 6)
 		t->meal_num = ft_atoi(av[5], &error);
 	else
 		t->meal_num = -1;
