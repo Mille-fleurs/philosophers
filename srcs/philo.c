@@ -10,54 +10,53 @@
 
 void	only_one_philo(t_table *t)
 {	
-	ft_usleep((t->t_die + 10));
+	ft_usleep((t->time_die + 10));
 	print_status(t, 1, DIED);
-	cleanup_table(t, 1);
+	cleanup_table(t, 1, 1);
 }
 
-// Take forks 
-// Eat
-// Sleep 
-// Think 
-// Repeat
-
-// int	take_fork(t_table *t, t_philo *p, int p_index)
-// {
-// 	t_fork f;
-// 	int	f_index;
-
-// 	if (p_index % 2)
-// 		f_index = p_index;
-// 	else
-// 		f_index = (p_index + 1) % t->philo_num;
-// 	f = t->forks[f_index];
-// 	if (set_int(&f.mutex, &f.taken, 1) == 1)
-// 		return (1);
-// 	if (set_int(&f.mutex, &p->f_num, p->f_num + 1))
-// 		return (1);
-// 	return (0);
-// }
-
-// void sleep_routine(t_table *t)
-// {
-
-// }
-
-// int eat_routine(t_table *t, t_philo *p, int p_index)
-// {
-// 	if (p->f_num == 2)
-// 		print_status(p_index, EATING);
-// 	usleep(t->t_eat);
-
-
-// }
-
-int	think_routine(t_table *t)
+void	end_on_error(t_table *t)
 {
-	int t_think;
+	set_int(&t->end_mutex, &t->end, 1);
+}
 
-	
+int	take_fork(t_philo *p)
+{
+	if (safe_mutex_handle(&p->first_f->mutex, LOCK) == 0)
+		return (end_on_error(p->table), 0);
+	if (!simulation_finished(p->table))
+		print_status(p->table, p->id, GOT_FORK_1);
+	if (safe_mutex_handle(&p->second_f->mutex, LOCK) == 0)
+	{
+		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
+		return (end_on_error(p->table), 0);
+	}
+	if (!simulation_finished(p->table))
+		print_status(p->table, p->id, GOT_FORK_2);
+	return (1);
+}
 
+void	think_routine(t_philo *p, int silent)
+{
+	long	time_to_think;
+	long	last_meal_time;
+
+	last_meal_time = get_long(&p->philo_mutex, &p->last_meal_time);
+	if (last_meal_time == -1)
+	{
+		set_int(&p->table->end_mutex, &p->table->end, 1);
+		return ;
+	}
+	time_to_think = (p->table->time_die - (get_current_time() - last_meal_time) - p->table->time_eat) / 2;
+	if (time_to_think < 0)
+		time_to_think = 0;
+	if (time_to_think == 0 && silent == 1)
+		time_to_think = 1;
+	if (time_to_think > 600)
+		time_to_think = 200;
+	if (!simulation_finished(p->table) && silent == 0)
+		print_status(p->table, p->id, THINKING);
+	pricise_sleep(p->table, time_to_think);
 }
 
 void    *philosopher(void *data)
@@ -65,8 +64,16 @@ void    *philosopher(void *data)
     t_philo *p;
 
     p = (t_philo *)data;
-	printf("philo_id: %d\n", p->id);
-	printf("current_time: %ld\n", get_current_time());
+
+	while (!get_int(&p->table->table_mutex, &p->table->threads_ready))
+		usleep(100);
+	while (get_current_time() < p->table->start_time)
+		usleep(100);
 	print_status(p->table, p->id, THINKING);
+	while (!simulation_finished(p->table))
+	{
+		think_routine(p, 0);
+		usleep(1000);
+	}
 	return (NULL);
 }

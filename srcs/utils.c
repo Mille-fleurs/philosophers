@@ -22,6 +22,28 @@ int	ft_strlen(char *str)
 	return (len);
 }
 
+long	get_current_time(void)
+{
+	struct timeval	time;
+
+	if (gettimeofday(&time, NULL) == -1)
+		write(2, "gettimeofdday() error\n", 22);
+	return ((long)(time.tv_sec * 1000 + time.tv_usec / 1000));
+}
+
+void	pricise_sleep(t_table *t, long ms)
+{
+	long	start;
+
+	start = get_current_time();
+	while (!get_int(&t->end_mutex, &t->end))
+	{
+		if ((get_current_time() - start) >= ms)
+			break;
+		usleep(200);
+	}
+}
+
 // void	*safe_malloc(size_t bytes)
 // {
 // 	void	*ret;
@@ -31,23 +53,3 @@ int	ft_strlen(char *str)
 // 		return (NULL);
 // 	return (ret);
 // }
-
-size_t	get_current_time(void)
-{
-	struct timeval	time;
-
-	if (gettimeofday(&time, NULL) == -1)
-		write(2, "gettimeofdday() error\n", 22);
-	return (time.tv_sec * 1000 + time.tv_usec / 1000);
-}
-
-int		ft_usleep(size_t milliseconds)
-{
-	size_t	start;
-
-	start = get_current_time();
-	while ((get_current_time() - start) < milliseconds)
-		usleep(100);
-	return (0);
-}
-

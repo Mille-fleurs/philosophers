@@ -29,98 +29,99 @@ static void	assign_forks(t_philo *p, t_fork *f, int pos)
 	}
 }
 
-static t_philo	*init_philo(t_table *t)
+static int	init_fork(t_table *t, int *forks_inited)
 {
-	t_philo *p;
 	int i;
 
-	t->philos = malloc(t->philo_num * sizeof(t_philo));
-	if (!t->philos)
-		return (cleanup_table(t, 0), NULL);
-	p = t->philos;
-	i = -1;
-	while (++i < t->philo_num)
-	{
-		if (!safe_mutex_handle(&p[i].philo_mutex, INIT))
-			return (0);
-		p[i].id = i + 1;
-		p[i].is_full = 0;
-		p[i].meals_eaten = 0;
-		p[i].table = t;
-		p[i].last_meal_time = 0;
-		assign_forks(p, t->forks, i);
-	}
-	return (p);
-}
-
-static t_fork *init_fork(t_table *t)
-{
-	t_fork *f;
-	int i;
-
+	*forks_inited = 0;
 	t->forks = malloc(t->philo_num * sizeof(t_fork));
 	if (!t->forks)
-		return (cleanup_table(t, 0), NULL);
-	f = t->forks;
+		return (0);
 	i = -1;
 	while (++i < t->philo_num)
 	{
-		if (!safe_mutex_handle(&f[i].mutex, INIT))
-			return (cleanup_table(t, i), NULL);
-		f[i].id = i;
-		f[i].taken = 0;
+		if (!safe_mutex_handle(&t->forks[i].mutex, INIT))
+		{
+			*forks_inited = i;
+			return (0);
+		}
+		t->forks[i].id= i;
 	}
-	return (f);
+	*forks_inited = t->philo_num;
+	return (1);
 }
 
-void	parse_arg(t_table *t, int ac, char **av)
+static int	init_philo(t_table *t, int *philos_inited)
 {
-	int	i;
-	int	res;
-	int of;
+	int i;
 
-	i = 0;
-	res = 0;
-	of = 0;
-	while (++i < ac)
+	*philos_inited = 0;
+	t->philos = malloc(t->philo_num * sizeof(t_philo));
+	if (!t->philos)
+		return (0);
+	i = -1;
+	while (++i < t->philo_num)
 	{
-		res = ft_atoi(av[i], &of);
-		if (i == 1)
-			t->philo_num = res;
-		if (i == 2)
-			t->t_die = res;
-		if (i == 3)
-			t->t_eat = res;
-		if (i == 4)
-			t->t_sleep = res;
-		if (ac == 5)
-			t->meal_num = -1;
-		else if (i == 5)
-			t->meal_num = res;
+		if (!safe_mutex_handle(&t->philos[i].philo_mutex, INIT))
+		{
+			*philos_inited = i;
+			return (0);
+		}
+		t->philos[i].id = i + 1;
+		t->philos[i].is_full = 0;
+		t->philos[i].meals_eaten = 0;
+		t->philos[i].table = t;
+		t->philos[i].last_meal_time = 0;
+		assign_forks(&t->philos[i], t->forks, i);
 	}
+	*philos_inited = t->philo_num;
+	return (1);
+}
+
+static int	init_table_mutexes(t_table *t)
+{
+	if (!safe_mutex_handle(&t->table_mutex, INIT))
+		return (0);
+	t->table_inited = 1;
+	if (!safe_mutex_handle(&t->end_mutex, INIT))
+	{
+		if (t->table_inited)
+			safe_mutex_handle(&t->table_mutex, DESTROY);
+		return (0);
+	}
+	t->end_inited = 1;
+	if (!safe_mutex_handle(&t->print_mutex, INIT))
+	{
+		if (t->end_inited)
+			safe_mutex_handle(&t->end_mutex, DESTROY);
+		if (t->table_inited)
+			safe_mutex_handle(&t->table_mutex, DESTROY);
+		return (0);
+	}
+	t->print_inited = 1;
+	return (1);
 }
 
 t_table *init_table(int ac, char **av)
 {
 	t_table *t;
+	int	forks_inited;
+	int	philos_inited;
 
-	t = malloc(sizeof(t_table) * 1);
+	forks_inited = 0;
+	philos_inited = 0;
+	t = malloc(sizeof(*t));
 	if (!t)
 		return (NULL);
-	parse_arg(t, ac, av);
-	t->forks = NULL;
-	t->philos = NULL;
-	t->end = 0;
-	t->threads_ready = 0;
-	if (!safe_mutex_handle(&t->table_mutex, INIT)
-		|| !safe_mutex_handle(&t->end_mutex, INIT)
-		|| !safe_mutex_handle(&t->print_mutex, INIT))
-		return (NULL);
-	t->forks = init_fork(t);
-	if (!t->forks)
-		return (cleanup_table(t, t->philo_num), NULL);
-	t->philos = init_philo(t);
-	if (!t->philos)
-		return (cleanup_table(t, t->philo_num), NULL);
+	memset(t, 0, sizeof(*t));
+	if (!parse_arg(t, ac, av))
+		return (free(t), NULL);
+	if (!init_table_mutexes(t))
+		return (cleanup_table(t, 0, 0), NULL);
+	if (!init_fork(t, &forks_inited))
+		return (cleanup_table(t, forks_inited, 0), NULL);
+	if (!init_philo(t, &philos_inited))
+		return (cleanup_table(t, forks_inited, philos_inited), NULL);
 	return (t);
 }
+

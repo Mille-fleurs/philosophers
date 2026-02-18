@@ -21,7 +21,7 @@ int	error_msg(char *str, char *detail, int ret)
 	return (ret);
 }
 
-int	destroy_mutexes(t_table *t, int forks_inited)
+int	destroy_mutexes(t_table *t, int forks_inited, int philo_inited)
 {
 	int i;
 
@@ -34,7 +34,7 @@ int	destroy_mutexes(t_table *t, int forks_inited)
 			return (0);
 	}
 	i = -1;
-	while (++i < t->philo_num)
+	while (++i < philo_inited)
 	{
 		if (!safe_mutex_handle(&t->philos[i].philo_mutex, DESTROY))
 			return (0);
@@ -48,11 +48,11 @@ int	destroy_mutexes(t_table *t, int forks_inited)
 	return (1);
 }
 
-void 	cleanup_table(t_table *t, int forks_inited)
+void 	cleanup_table(t_table *t, int forks_inited, int philo_inited)
 {
 	if (!t)
 		return ;
-	if (!destroy_mutexes(t, forks_inited))
+	if (!destroy_mutexes(t, forks_inited, philo_inited))
 		return ;
 	if (t->forks)
 	{

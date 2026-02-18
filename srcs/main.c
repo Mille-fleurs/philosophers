@@ -16,6 +16,8 @@ int	start_simulation(t_table *t)
 {
 	int	i;
 
+	t->threads_created = 0;
+	t->monitor_created = 0;
 	t->start_time = get_current_time() + (t->philo_num * 2 * 10);
 	i = -1;
 	while (++i < t->philo_num)
@@ -29,44 +31,58 @@ int	start_simulation(t_table *t)
 	{
 		if (!safe_thread_handle(&t->philos[i].thread_id, philosopher,
 				&t->philos[i], CREATE))
-			return (cleanup_table(t, t->philo_num), 0);
+		{
+			set_int(&t->table_mutex, &t->threads_ready, 1);
+			set_int(&t->end_mutex, &t->end, 1);
+			return (0);
+		}
+		t->threads_created++;
 	}
 	if (t->philo_num > 1)
 	{
 		if (!safe_thread_handle(&t->monitor, monitor, t, CREATE))
-			return (cleanup_table(t, t->philo_num), 0);
+		{
+			set_int(&t->table_mutex, &t->threads_ready, 1);
+			set_int(&t->end_mutex, &t->end, 1);
+			return (0);
+		}
+		t->monitor_created = 1;
 	}
-	i = -1;
-	set_int(&t->table_mutex, &t->threads_ready, 1);
+	if (!set_int(&t->table_mutex, &t->threads_ready, 1))
+	{
+		set_int(&t->end_mutex, &t->end, 1);
+		return (0);
+	}
 	return (1);
 }
 
-int	stop_simulation(t_table *t, int forks_inited)
+int	stop_simulation(t_table *t)
 {
 	int	i;
 
 	if (!t)
 		return (0);
 	i = -1;
-	while (++i < t->philo_num)
+	while (++i < t->threads_created)
 	{
 		if (!safe_thread_handle(&t->philos[i].thread_id, NULL, NULL, JOIN))
-			return (cleanup_table(t, forks_inited), 0);
+			return (0);
 	}
-	if (t->philo_num > 1)
+	if (t->monitor_created)
 	{
 		if (!safe_thread_handle(&t->monitor, NULL, NULL, JOIN))
-			return (cleanup_table(t, forks_inited), 0);
+			return (0);
 	}
-	cleanup_table(t, t->philo_num);
 	return (1);
 }
 
 int	main(int ac, char **av)
 {
 	t_table	*table;
+	int ret;
 
 	table = NULL;
+	ret = 0;
 	if (ac != 5 && ac != 6)
 		return (error_msg(STR_USAGE, NULL, 1));
 	if (!is_valid_arg(ac, av))
@@ -75,10 +91,11 @@ int	main(int ac, char **av)
 	if (!table)
 		return (1);
 	if (!start_simulation(table))
-		return (1);
-	if (!stop_simulation(table, table->philo_num))
-		return (1);
-	return (0);
+		ret = 1;
+	if (!stop_simulation(table))
+		ret = 1;
+	cleanup_table(table, table->philo_num, table->philo_num);
+	return (ret);
 }
 
 // dinner_start

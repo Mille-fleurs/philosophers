@@ -14,6 +14,8 @@
 
 static int	only_digit(char *str)
 {
+	if (!str || !*str)
+		return (0);
 	while (*str)
 	{
 		if (*str < '0' || *str > '9')
@@ -23,21 +25,20 @@ static int	only_digit(char *str)
 	return (1);
 }
 
-int	ft_atoi(const char *str, int *of)
+int	ft_atoi(const char *str)
 {
 	long	res;
 	int		digit;
 
+	if (!str || !*str)
+		return (-1);
 	res = 0;
 	while (*str >= '0' && *str <= '9')
 	{
 		digit = *str - '0';
+		if (res > (2147483647 - digit) / 10)
+			return (-1);
 		res = res * 10 + digit;
-		if (res > (2147483648 - digit) / 10)
-		{
-			*of = 1;
-			return (0);
-		}
 		str++;
 	}
 	return ((int)res);
@@ -45,22 +46,46 @@ int	ft_atoi(const char *str, int *of)
 
 int	is_valid_arg(int ac, char **av)
 {
-	int	of;
 	int res;
 	int i;
 
-	of = 0;
 	res = 0;
-	i = -1;
+	i = 0;
 	while (++i < ac)
 	{
 		if (!only_digit(av[i]))
 			return (error_msg(STR_ERR_INPUT_DIGIT, av[i], 0));
-		res = ft_atoi(av[i], &of);
+		res = ft_atoi(av[i]);
+		if (res < 0)
+			return (error_msg(STR_ERR_INPUT_DIGIT, av[i], 0));
 		if (i == 1 && (res < 1 || res > MAX_PHILO))
 			return (error_msg(STR_ERR_INPUT_DIGIT, STR_MAX_PHILO, 0));
-		if ((i >= 2 && i <= 5) && (res < 0 || of == 1))
-			return (error_msg(STR_ERR_INPUT_DIGIT, av[i], 0));
+	}
+	return (1);
+}
+
+int	parse_arg(t_table *t, int ac, char **av)
+{
+	int	i;
+	int	res;
+
+	t->meal_num = -1;
+	i = 0;
+	while (++i < ac)
+	{
+		res = ft_atoi(av[i]);
+		if (res < 0)
+			return (0);
+		if (i == 1)
+			t->philo_num = res;
+		else if (i == 2)
+			t->t_die = res;
+		else if (i == 3)
+			t->t_eat = res;
+		else if (i == 4)
+			t->t_sleep = res;
+		else if (i == 5)
+			t->meal_num = res;
 	}
 	return (1);
 }
