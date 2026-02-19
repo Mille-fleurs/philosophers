@@ -111,10 +111,11 @@ typedef enum s_status
 	DIED
 }						t_status;
 
-int						start_simulation(t_table *t);
-int						stop_simulation(t_table *t);
-void					only_one_philo(t_table *t);
 void					*philosopher(void *data);
+int						preparation(t_table *t);
+int						wait_until_ready(t_table *t);
+void					only_one_philo(t_table *t);
+void					end_on_error(t_table *t);
 void					print_status(t_table *t, int p_index, t_status code);
 void					*monitor(void *data);
 int						is_valid_arg(int ac, char **av);
@@ -132,9 +133,8 @@ long					get_long(pthread_mutex_t *mtx, long *value);
 int						simulation_finished(t_table *t);
 void					cleanup_table(t_table *t, int forks_inited, int philo_inited);
 int						error_msg(char *str, char *detail, int ret);
-int						ft_atoi(const char *str);
 int						ft_strlen(char *str);
 long					get_current_time(void);
-void					pricise_sleep(t_table *t, long ms);
+void					precise_sleep(t_table *t, long ms);
 
 #endif

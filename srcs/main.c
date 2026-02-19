@@ -12,7 +12,28 @@
 
 #include "philo.h"
 
-int	start_simulation(t_table *t)
+static int create_mutex(t_table *t)
+{
+	int i;
+
+	i = -1;
+	while (++i < t->philo_num)
+	{
+		if (!safe_thread_handle(&t->philos[i].thread_id, philosopher,
+				&t->philos[i], CREATE))
+			return (0);
+		t->threads_created++;
+	}
+	if (t->philo_num > 1)
+	{
+		if (!safe_thread_handle(&t->monitor, monitor, t, CREATE))
+			return (0);
+		t->monitor_created = 1;
+	}
+	return (1);
+}
+
+static int	start_simulation(t_table *t)
 {
 	int	i;
 
@@ -26,27 +47,11 @@ int	start_simulation(t_table *t)
 				t->start_time))
 			return (0);
 	}
-	i = -1;
-	while (++i < t->philo_num)
+	if (!create_mutex(t))
 	{
-		if (!safe_thread_handle(&t->philos[i].thread_id, philosopher,
-				&t->philos[i], CREATE))
-		{
-			set_int(&t->table_mutex, &t->threads_ready, 1);
-			set_int(&t->end_mutex, &t->end, 1);
-			return (0);
-		}
-		t->threads_created++;
-	}
-	if (t->philo_num > 1)
-	{
-		if (!safe_thread_handle(&t->monitor, monitor, t, CREATE))
-		{
-			set_int(&t->table_mutex, &t->threads_ready, 1);
-			set_int(&t->end_mutex, &t->end, 1);
-			return (0);
-		}
-		t->monitor_created = 1;
+		set_int(&t->table_mutex, &t->threads_ready, 1);
+		set_int(&t->end_mutex, &t->end, 1);
+		return (0);
 	}
 	if (!set_int(&t->table_mutex, &t->threads_ready, 1))
 	{
@@ -56,7 +61,7 @@ int	start_simulation(t_table *t)
 	return (1);
 }
 
-int	stop_simulation(t_table *t)
+static int	stop_simulation(t_table *t)
 {
 	int	i;
 

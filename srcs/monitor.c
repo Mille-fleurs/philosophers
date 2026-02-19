@@ -12,10 +12,6 @@
 
 #include "philo.h"
 
-// detecting if a philosopher dies 
-// detecting if all philosophers have eaten enough (if meal_num is set)
-// stopping the simulation safely
-
 static void    kill_philo(t_table *t, int p_id)
 {
     print_status(t, p_id, DIED);
@@ -29,7 +25,7 @@ static int     is_dead(t_table *t, t_philo *p)
 
     curr_time = get_current_time();
     last_meal_time = get_long(&p->philo_mutex, &p->last_meal_time);
-    if (curr_time - last_meal_time >= t->t_die)
+    if (curr_time - last_meal_time >= t->time_die)
         return (1);
     return (0);
 }

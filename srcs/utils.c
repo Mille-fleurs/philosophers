@@ -31,12 +31,12 @@ long	get_current_time(void)
 	return ((long)(time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
-void	pricise_sleep(t_table *t, long ms)
+void	precise_sleep(t_table *t, long ms)
 {
 	long	start;
 
 	start = get_current_time();
-	while (!get_int(&t->end_mutex, &t->end))
+	while (!simulation_finished(t))
 	{
 		if ((get_current_time() - start) >= ms)
 			break;

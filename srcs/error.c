@@ -21,7 +21,7 @@ int	error_msg(char *str, char *detail, int ret)
 	return (ret);
 }
 
-int	destroy_mutexes(t_table *t, int forks_inited, int philo_inited)
+static int	destroy_mutexes(t_table *t, int forks_inited, int philo_inited)
 {
 	int i;
 

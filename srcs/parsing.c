@@ -25,7 +25,7 @@ static int	only_digit(char *str)
 	return (1);
 }
 
-int	ft_atoi(const char *str)
+static int	ft_atoi(const char *str)
 {
 	long	res;
 	int		digit;
@@ -79,11 +79,11 @@ int	parse_arg(t_table *t, int ac, char **av)
 		if (i == 1)
 			t->philo_num = res;
 		else if (i == 2)
-			t->t_die = res;
+			t->time_die = res;
 		else if (i == 3)
-			t->t_eat = res;
+			t->time_eat = res;
 		else if (i == 4)
-			t->t_sleep = res;
+			t->time_sleep = res;
 		else if (i == 5)
 			t->meal_num = res;
 	}
