@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo.h                                            :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:05:59 by chitoupa         ###   ########.fr       */
+/*   Created: 2026/02/20 20:31:18 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/20 21:49:48 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <errno.h>
 # include <limits.h>
 # include <pthread.h>
-# include <stdio.h>
+# include<stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/time.h>
@@ -41,6 +41,13 @@ not a valid unsigned integer between 0 and 2147483647.\n"
 there must be between 1 and %s philosophers.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_GETTIME "%s error: Could not get current time.\n"
+# define STR_ERR_SEM     "%s error: Could not create semaphore.\n"
+# define STR_ERR_FORK    "%s error: Could not fork child.\n"
+
+# define CHILD_EXIt_ERR_PTHREAD 40
+# define CHILD_EXIT_ERR_SEM     41
+# define CHILD_EXIT_PHILO_FULL  42
+# define CHILD_EXIT_PHILO_DEAD  43
 
 typedef struct s_philo
 {
@@ -62,29 +69,22 @@ typedef struct s_table
 	sem_t				*sem_forks;
 	sem_t 				*sem_print;
 	sem_t 				*sem_stop;
-	
+	sem_t 				*sem_philo_full;
+	sem_t				*sem_philo_dead;
+	sem_t				*sem_meal;
+	pthread_t			gluttony_monitor;
+	pthread_t			famine_monitor;
 	t_philo				*philos;
 }						t_table;
 
-typedef enum s_op
-{
-	LOCK,
-	UNLOCK,
-	CREATE,
-	INIT,
-	DESTROY,
-	JOIN,
-	DETACH,
-}						t_op;
-
 typedef enum s_status
 {
-	EATING,
-	SLEEPING,
-	THINKING,
-	GOT_FORK_1,
-	GOT_FORK_2,
-	DIED
+	DIED = 0,
+	EATING = 1,
+	SLEEPING = 2,
+	THINKING = 3,
+	GOT_FORK_1 = 4,
+	GOT_FORK_2 = 5
 }						t_status;
 
 void					*philosopher(void *data);

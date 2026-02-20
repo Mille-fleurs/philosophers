@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:46 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:05:43 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/20 21:17:01 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static int	start_simulation(t_table *t)
 	{
 		if (!set_long(&t->philos[i].philo_mutex, &t->philos[i].last_meal_time,
 				t->start_time))
-			return (0);
+			eturn (0);
 	}
 	if (!create_mutex(t))
 	{
@@ -96,11 +96,10 @@ int	main(int ac, char **av)
 	if (!table)
 		return (1);
 	if (!start_simulation(table))
-		ret = 1;
+		return (1);
 	if (!stop_simulation(table))
-		ret = 1;
-	cleanup_table(table, table->philo_num, table->philo_num);
-	return (ret);
+		return (cleanup_table(table, 1));
+	return (cleanup_table(table, 1));
 }
 
 // dinner_start
