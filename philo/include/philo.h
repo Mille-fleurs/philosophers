@@ -38,6 +38,7 @@ there must be between 1 and %s philosophers.\n"
 # define STR_ERR_THREAD "%s error: Could not create thread.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_MUTEX "%s error: Could not create mutex.\n"
+# define STR_ERR_GETTIME "%s error: Could not get current time.\n"
 
 typedef struct s_table	t_table;
 

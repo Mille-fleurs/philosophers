@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_H
-# define PHILO_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include <errno.h>
 # include <limits.h>
@@ -21,6 +21,10 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+# include <semaphore.h>
+# include <fcntl.h>
+# include <signal.h>
+# include <sys/wait.h>
 
 # define MAX_PHILO 250
 # define STR_MAX_PHILO "250"
@@ -35,35 +39,15 @@ not a valid unsigned integer between 0 and 2147483647.\n"
 # define STR_ERR_INPUT_POFLOW \
 	"%s invalid input: \
 there must be between 1 and %s philosophers.\n"
-# define STR_ERR_THREAD "%s error: Could not create thread.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
-# define STR_ERR_MUTEX "%s error: Could not create mutex.\n"
-
-typedef struct s_table	t_table;
-
-typedef struct s_inited
-{
-	int e_inited;
-	int t_inited;
-	int p_inited;
-}				t_inited;
-
-typedef struct s_fork
-{
-	pthread_mutex_t		mutex;
-	int					id;
-}						t_fork;
+# define STR_ERR_GETTIME "%s error: Could not get current time.\n"
 
 typedef struct s_philo
 {
-	int id; // 1..N
-	int					is_full;
+	pid_t				pid;
+	int 				id;
 	int					meals_eaten;
-	t_fork				*first_f;
-	t_fork				*second_f;
 	long				last_meal_time;
-	pthread_t			thread_id;
-	pthread_mutex_t		philo_mutex;
 	t_table				*table;
 }						t_philo;
 
@@ -74,19 +58,11 @@ typedef struct s_table
 	int					time_eat;
 	int					time_sleep;
 	int 				meal_num;
-	int 				end;
-	int					table_inited;
-	int					end_inited;
-	int					print_inited;
-	int					threads_ready;
-	int					threads_created;
-	int					monitor_created;
-	long				start_time;
-	pthread_mutex_t		table_mutex;
-	pthread_mutex_t		end_mutex;
-	pthread_mutex_t		print_mutex;
-	pthread_t			monitor;
-	t_fork				*forks;
+	
+	sem_t				*sem_forks;
+	sem_t 				*sem_print;
+	sem_t 				*sem_stop;
+	
 	t_philo				*philos;
 }						t_table;
 
