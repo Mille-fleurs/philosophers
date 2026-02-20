@@ -1,6 +1,12 @@
 
 #include "philo.h"
 
+int		unlock_forks_return(t_philo *p, int must_set)
+{
+	unlock_forks_end(p, must_set);
+	return (0);
+}
+
 void	end_on_error(t_table *t)
 {
 	set_int(&t->end_mutex, &t->end, 1);

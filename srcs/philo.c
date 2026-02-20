@@ -1,7 +1,7 @@
 
 #include "philo.h"
 
-static int	unlock_forks_end(t_philo *p, int must_set)
+int	unlock_forks_end(t_philo *p, int must_set)
 {
 	int ret;
 
@@ -19,25 +19,21 @@ static int	eat_routine(t_philo *p)
 {
 	int meals;
 	if (!set_long(&p->philo_mutex, &p->last_meal_time, get_current_time()))
-	{
-		unlock_forks_end(p, 1);
-		return (0);
-	}
+		return (unlock_forks_return(p, 1));
 	if (!simulation_finished(p->table))
 		print_status(p->table, p->id, EATING);
 	precise_sleep(p->table, p->table->time_eat);
 	meals = get_int(&p->philo_mutex, &p->meals_eaten);
 	if (meals < 0)
-	{
-		unlock_forks_end(p, 1);
-		return (0);
-	}
+		return (unlock_forks_return(p, 1));
 	if (!set_int(&p->philo_mutex, &p->meals_eaten, meals + 1))
+		return (unlock_forks_return(p, 1));
+	if (p->table->meal_num > 0 && meals + 1 >= p->table->meal_num)
 	{
-		unlock_forks_end(p, 1);
-		return (0);
+		if (!set_int(&p->philo_mutex, &p->is_full, 1))
+			return (unlock_forks_return(p, 1));
 	}
-	if (!unlock_forks_end(p, 0))
+	if (!unlock_forks_end(p, 1))
 		return (0);
 	return (1);
 }
@@ -59,10 +55,7 @@ static int	take_fork(t_philo *p)
 		return (end_on_error(p->table), 0);
 	}
 	if (simulation_finished(p->table))
-	{
-		unlock_forks_end(p, 0);
-		return (0);
-	}
+		return (unlock_forks_return(p, 0));
 	if (!simulation_finished(p->table))
 		print_status(p->table, p->id, GOT_FORK_2);
 	return (1);

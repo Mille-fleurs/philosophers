@@ -116,6 +116,8 @@ int						preparation(t_table *t);
 int						wait_until_ready(t_table *t);
 void					only_one_philo(t_table *t);
 void					end_on_error(t_table *t);
+int						unlock_forks_return(t_philo *p, int must_set);
+int						unlock_forks_end(t_philo *p, int must_set);
 void					print_status(t_table *t, int p_index, t_status code);
 void					*monitor(void *data);
 int						is_valid_arg(int ac, char **av);
