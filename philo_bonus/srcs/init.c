@@ -1,115 +1,42 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/14 15:24:34 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:05:46 by chitoupa         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
-#include "philo.h"
+#include "philo_bonus.h"
 
-static void	assign_forks(t_philo *p, t_fork *f, int pos)
+// Allocate and fill t_table from argv
+// Create/open global named semaphores
+// Allocate and initialize table->philos array
+// Prepare per-philo unique name sem_meal_name (but open sem_meal later in the child)
+
+static int open_global_sems(t_table *t, int i)
 {
-	int	n;
-
-	n = p->table->philo_num;
-	if (p->id % 2 == 1)
+	t->sem_forks = sem_open(SEM_FORKS, O_CREAT, 0644, t->philo_num);
+	t->sem_print = sem_open(SEM_PRINT, O_CREAT, 0644, 1);
+	t->sem_philo_full = sem_open(SEM_FULL, O_CREAT, 0644, t->philo_num);
+	t->sem_philo_dead = sem_open(SEM_DEAD, O_CREAT, 0644, t->philo_num);
+	t->sem_stop = sem_open(SEM_STOP, O_CREAT, 0644, 1);
+	if (t->sem_forks == SEM_FAILED || t->sem_print == SEM_FAILED || t->sem_philo_full == SEM_FAILED
+		|| t->sem_philo_dead == SEM_FAILED || t->sem_stop == SEM_FAILED)
 	{
-		p->first_f = &f[pos];
-		p->second_f = &f[(pos + 1) % n];
-	}
-	else
-	{
-		p->first_f = &f[(pos + 1) % n];
-		p->second_f = &f[pos];
+		error_msg(STR_ERR_SEM, NULL, 0);
+		
+		
+	
 	}
 }
 
-static int	init_fork(t_table *t, int *forks_inited)
+static char	*make_sem_meal_name(unsigned int id)
 {
-	int i;
 
-	*forks_inited = 0;
-	t->forks = malloc(t->philo_num * sizeof(t_fork));
-	if (!t->forks)
-		return (0);
-	i = -1;
-	while (++i < t->philo_num)
-	{
-		if (!safe_mutex_handle(&t->forks[i].mutex, INIT))
-		{
-			*forks_inited = i;
-			return (0);
-		}
-		t->forks[i].id= i;
-	}
-	*forks_inited = t->philo_num;
-	return (1);
 }
 
-static int	init_philo(t_table *t, int *philos_inited)
+static bool	init_philos(t_table *t)
 {
-	int i;
 
-	*philos_inited = 0;
-	t->philos = malloc(t->philo_num * sizeof(t_philo));
-	if (!t->philos)
-		return (0);
-	i = -1;
-	while (++i < t->philo_num)
-	{
-		if (!safe_mutex_handle(&t->philos[i].philo_mutex, INIT))
-		{
-			*philos_inited = i;
-			return (0);
-		}
-		t->philos[i].id = i + 1;
-		t->philos[i].is_full = 0;
-		t->philos[i].meals_eaten = 0;
-		t->philos[i].table = t;
-		t->philos[i].last_meal_time = 0;
-		assign_forks(&t->philos[i], t->forks, i);
-	}
-	*philos_inited = t->philo_num;
-	return (1);
 }
 
-static int	init_table_mutexes(t_table *t)
-{
-	if (!safe_mutex_handle(&t->table_mutex, INIT))
-		return (0);
-	t->table_inited = 1;
-	if (!safe_mutex_handle(&t->end_mutex, INIT))
-	{
-		if (t->table_inited)
-			safe_mutex_handle(&t->table_mutex, DESTROY);
-		return (0);
-	}
-	t->end_inited = 1;
-	if (!safe_mutex_handle(&t->print_mutex, INIT))
-	{
-		if (t->end_inited)
-			safe_mutex_handle(&t->end_mutex, DESTROY);
-		if (t->table_inited)
-			safe_mutex_handle(&t->table_mutex, DESTROY);
-		return (0);
-	}
-	t->print_inited = 1;
-	return (1);
-}
-
-t_table *init_table(int ac, char **av)
+t_table *init_table(int ac, char **av, int i)
 {
 	t_table *t;
-	int	forks_inited;
-	int	philos_inited;
-
-	forks_inited = 0;
-	philos_inited = 0;
+	
 	t = malloc(sizeof(*t));
 	if (!t)
 		return (NULL);
@@ -125,3 +52,20 @@ t_table *init_table(int ac, char **av)
 	return (t);
 }
 
+// What NOT to do in init.c (to avoid bugs)
+// Do not fork() in init (keep init purely “setup”).
+// Do not open sem_meal in parent unless you have a reason.
+// Best practice: open it in the child after fork:
+// sem_unlink(p->sem_meal_name) (optional but clean)
+// p->sem_meal = sem_open(p->sem_meal_name, O_CREAT, 0644, 1)
+// Do not store “fork objects” in bonus. Only sem_forks counter exists.
+// 4) Quick checklist: init is correct if…
+// Running twice does not break semaphores (because of unlink).
+// SEM_FORKS initial value = N.
+// SEM_PRINT initial value = 1.
+// SEM_FULL and SEM_DEAD initial value = N (for event strategy).
+// Every philo has a unique sem_meal_name like /philo_local_meal_1, /..._2, etc.
+// On any error, you do not leak:
+// sem_meal_name strings
+// table->philos
+// global semaphores

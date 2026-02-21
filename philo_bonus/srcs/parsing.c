@@ -1,16 +1,6 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   parsing.c                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/01/28 11:30:02 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:06:04 by chitoupa         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
 
-#include "philo.h"
+
+#include "philo_bonus.h"
 
 static int	only_digit(char *str)
 {
@@ -79,7 +69,7 @@ int	parse_arg(t_table *t, int ac, char **av)
 		if (i == 1)
 			t->philo_num = res;
 		else if (i == 2)
-			t->time_die = res;
+			t->time_to_die = res;
 		else if (i == 3)
 			t->time_eat = res;
 		else if (i == 4)

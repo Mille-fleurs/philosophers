@@ -12,6 +12,8 @@
 
 #include "philo.h"
 
+void	write_outcome(t_table *table);
+
 static int create_mutex(t_table *t)
 {
 	int i;
@@ -99,9 +101,28 @@ int	main(int ac, char **av)
 		ret = 1;
 	if (!stop_simulation(table))
 		ret = 1;
+	write_outcome(table);
 	cleanup_table(table, table->philo_num, table->philo_num);
 	return (ret);
 }
 
-// dinner_start
-// end with no leak -> philos full | | 1 philo died
+void	write_outcome(t_table *table)
+{
+	unsigned int	i;
+	unsigned int	full_count;
+
+	full_count = 0;
+	i = 0;
+	while (i < table->philo_num)
+	{
+		if (get_int(&table->philos[i].philo_mutex, &table->philos[i].meals_eaten) >= (unsigned int)table->meal_num)
+			full_count++;
+		i++;
+	}
+	pthread_mutex_lock(&table->print_mutex);
+	printf("%d/%d philosophers had at least %d meals.\n",
+		full_count, table->philo_num, table->meal_num);
+	pthread_mutex_unlock(&table->print_mutex);
+	return ;
+}
+
