@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:05:59 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:36:42 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,10 @@ typedef struct s_table	t_table;
 
 typedef struct s_inited
 {
-	int e_inited;
-	int t_inited;
-	int p_inited;
-}				t_inited;
+	int					e_inited;
+	int					t_inited;
+	int					p_inited;
+}						t_inited;
 
 typedef struct s_fork
 {
@@ -57,7 +57,7 @@ typedef struct s_fork
 
 typedef struct s_philo
 {
-	int id; // 1..N
+	int					id;
 	int					is_full;
 	int					meals_eaten;
 	t_fork				*first_f;
@@ -74,8 +74,8 @@ typedef struct s_table
 	int					time_die;
 	int					time_eat;
 	int					time_sleep;
-	int 				meal_num;
-	int 				end;
+	int					meal_num;
+	int					end;
 	int					table_inited;
 	int					end_inited;
 	int					print_inited;
@@ -134,7 +134,8 @@ int						get_int(pthread_mutex_t *mtx, int *value);
 int						set_long(pthread_mutex_t *mtx, long *dest, long value);
 long					get_long(pthread_mutex_t *mtx, long *value);
 int						simulation_finished(t_table *t);
-void					cleanup_table(t_table *t, int forks_inited, int philo_inited);
+void					cleanup_table(t_table *t, int forks_inited,
+							int philo_inited);
 int						error_msg(char *str, char *detail, int ret);
 int						ft_strlen(char *str);
 long					get_current_time(void);

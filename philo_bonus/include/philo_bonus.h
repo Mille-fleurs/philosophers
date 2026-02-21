@@ -1,19 +1,30 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/21 21:45:58 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/21 23:37:47 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #ifndef PHILO_BONUS_H
 # define PHILO_BONUS_H
 
+# include <fcntl.h>
 # include <limits.h>
 # include <pthread.h>
+# include <semaphore.h>
+# include <signal.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <stdbool.h>
 # include <sys/time.h>
-# include <unistd.h>
-# include <semaphore.h>
-# include <fcntl.h>
-# include <signal.h>
 # include <sys/wait.h>
+# include <unistd.h>
 
 # define MAX_PHILO 250
 # define STR_MAX_PHILO "250"
@@ -28,11 +39,11 @@ not a valid unsigned integer between 0 and 2147483647.\n"
 # define STR_ERR_INPUT_POFLOW \
 	"%s invalid input: \
 there must be between 1 and %s philosophers.\n"
-# define STR_ERR_THREAD	"%s error: Could not create thread.\n"
+# define STR_ERR_THREAD "%s error: Could not create thread.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_GETTIME "%s error: Could not get current time.\n"
-# define STR_ERR_SEM     "%s error: Could not create semaphore.\n"
-# define STR_ERR_FORK    "%s error: Could not fork child.\n"
+# define STR_ERR_SEM "%s error: Could not create semaphore.\n"
+# define STR_ERR_FORK "%s error: Could not fork child.\n"
 
 # define SEM_FORKS "/philo_global_forks"
 # define SEM_PRINT "/philo_global_print"
@@ -42,11 +53,11 @@ there must be between 1 and %s philosophers.\n"
 # define SEM_MEAL "/philo_local_meal_"
 
 # define CHILD_EXIt_ERR_PTHREAD 40
-# define CHILD_EXIT_ERR_SEM     41
-# define CHILD_EXIT_PHILO_FULL  42
-# define CHILD_EXIT_PHILO_DEAD  43
+# define CHILD_EXIT_ERR_SEM 41
+# define CHILD_EXIT_PHILO_FULL 42
+# define CHILD_EXIT_PHILO_DEAD 43
 
-typedef struct s_table t_table;
+typedef struct s_table	t_table;
 
 typedef struct s_philo
 {
@@ -58,10 +69,10 @@ typedef struct s_philo
 	sem_t				*sem_meal;
 	char				*sem_meal_name;
 	unsigned int		fork_num;
-	unsigned int 		id;
+	unsigned int		id;
 	unsigned int		meals_eaten;
 	int					is_full;
-	long 				last_meal;
+	long				last_meal;
 	t_table				*table;
 }						t_philo;
 
@@ -72,14 +83,14 @@ typedef struct s_table
 	time_t				time_to_die;
 	time_t				time_to_eat;
 	time_t				time_to_sleep;
-	int 				meal_num;
+	int					meal_num;
 	sem_t				*sem_forks;
-	sem_t 				*sem_print;
-	sem_t 				*sem_stop;
-	sem_t 				*sem_philo_full;
+	sem_t				*sem_print;
+	sem_t				*sem_stop;
+	sem_t				*sem_philo_full;
 	sem_t				*sem_philo_dead;
 	unsigned int		full_philo_num;
-	int 				end;
+	int					end;
 	pid_t				pids;
 	pthread_t			meal_monitor;
 	pthread_t			death_monitor;
@@ -97,19 +108,21 @@ typedef enum s_status
 	GOT_FORK_2 = 5
 }						t_status;
 
-int	is_valid_arg(int ac, char **av);
-int	parse_arg(t_table *t, int ac, char **av);
-void	print_status(t_philo *philo, int sim_finished, t_status code);
-int	ft_strlen(char *str);
-time_t	get_current_time(void);
-void	precise_sleep(t_table *t, long ms);
-void start_delay(time_t start_time);
-void *free_table(t_table *t);
-void 	unlink_grobal_sems(t_table *t);
-int     sem_error_cleanup(t_table *t);
-int 	cleanup_table(t_table *t, int exit_code);
-int	error_msg(char *str, char *detail, int ret);
-int error_failure(char *s, char *details, t_table *t);
-void	*error_null(char *s, char *details, t_table *t);
+int						is_valid_arg(int ac, char **av);
+int						parse_arg(t_table *t, int ac, char **av);
+void					print_status(t_philo *philo, int sim_finished,
+							t_status code);
+int						ft_strlen(char *str);
+time_t					get_current_time(void);
+void					precise_sleep(t_table *t, long ms);
+void					start_delay(time_t start_time);
+void					*free_table(t_table *t);
+void					unlink_grobal_sems(t_table *t);
+int						sem_error_cleanup(t_table *t);
+int						cleanup_table(t_table *t, int exit_code);
+int						error_msg(char *str, char *detail, int ret);
+int						error_failure(char *s, char *details, t_table *t);
+int 					sem_failure(t_table *t, int ret);
+void					*error_null(char *s, char *details, t_table *t);
 
 #endif

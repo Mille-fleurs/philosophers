@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:23:57 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 13:27:48 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:37:40 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,9 @@ int	set_int(pthread_mutex_t *mtx, int *dest, int value)
 	return (1);
 }
 
-int get_int(pthread_mutex_t *mtx, int *src)
+int	get_int(pthread_mutex_t *mtx, int *src)
 {
-	int ret;
+	int	ret;
 
 	if (!safe_mutex_handle(mtx, LOCK))
 		return (-1);
@@ -44,9 +44,9 @@ int	set_long(pthread_mutex_t *mtx, long *dest, long value)
 	return (1);
 }
 
-long get_long(pthread_mutex_t *mtx, long *src)
+long	get_long(pthread_mutex_t *mtx, long *src)
 {
-	long ret;
+	long	ret;
 
 	if (!safe_mutex_handle(mtx, LOCK))
 		return (-1);
@@ -56,9 +56,9 @@ long get_long(pthread_mutex_t *mtx, long *src)
 	return (ret);
 }
 
-int		simulation_finished(t_table *t)
+int	simulation_finished(t_table *t)
 {
-	int ret;
+	int	ret;
 
 	ret = get_int(&t->end_mutex, &t->end);
 	if (ret < 0)
@@ -68,4 +68,3 @@ int		simulation_finished(t_table *t)
 	}
 	return (ret);
 }
-

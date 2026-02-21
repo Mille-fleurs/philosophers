@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   cleanup.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/21 21:46:08 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/21 23:37:51 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo_bonus.h"
 
@@ -39,11 +50,16 @@ void 	unlink_grobal_sems(t_table *t)
 
 int     sem_error_cleanup(t_table *t)
 {
-    sem_close(t->sem_forks);
-	sem_clone(t->sem_print);
-	sem_close(t->sem_philo_full);
-	sem_close(t->sem_philo_dead);
-	sem_close(t->sem_stop);
+    if (t->sem_forks)
+        sem_close(t->sem_forks);
+    if (t->sem_print)
+	    sem_clone(t->sem_print);
+    if (t->sem_philo_full)
+	    sem_close(t->sem_philo_full);
+    if (t->sem_philo_dead)
+	    sem_close(t->sem_philo_dead);
+    if (t->sem_stop)
+	    sem_close(t->sem_stop);
 	unlink_global_sems(t);
 }
 

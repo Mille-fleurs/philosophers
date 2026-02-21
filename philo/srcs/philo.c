@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/21 21:45:24 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/21 23:37:37 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo.h"
 
 int	unlock_forks_end(t_philo *p, int must_set)
 {
-	int ret;
+	int	ret;
 
 	ret = 1;
 	if (must_set == 1)
@@ -17,7 +28,8 @@ int	unlock_forks_end(t_philo *p, int must_set)
 
 static int	eat_routine(t_philo *p)
 {
-	int meals;
+	int	meals;
+
 	if (!set_long(&p->philo_mutex, &p->last_meal_time, get_current_time()))
 		return (unlock_forks_return(p, 1));
 	if (!simulation_finished(p->table))
@@ -72,7 +84,8 @@ static void	think_routine(t_philo *p, int silent)
 		set_int(&p->table->end_mutex, &p->table->end, 1);
 		return ;
 	}
-	time_to_think = (p->table->time_die - (get_current_time() - last_meal_time) - p->table->time_eat) / 2;
+	time_to_think = (p->table->time_die - (get_current_time() - last_meal_time)
+			- p->table->time_eat) / 2;
 	if (time_to_think < 0)
 		time_to_think = 0;
 	if (time_to_think == 0 && silent == 1)
@@ -84,12 +97,11 @@ static void	think_routine(t_philo *p, int silent)
 	precise_sleep(p->table, time_to_think);
 }
 
-void    *philosopher(void *data)
+void	*philosopher(void *data)
 {
-    t_philo *p;
+	t_philo	*p;
 
-    p = (t_philo *)data;
-	
+	p = (t_philo *)data;
 	if (!preparation(p->table))
 		return (NULL);
 	if (p->table->philo_num == 1)
@@ -101,11 +113,11 @@ void    *philosopher(void *data)
 	{
 		think_routine(p, 0);
 		if (simulation_finished(p->table))
-			break;
+			break ;
 		if (!take_fork(p))
-			break;
+			break ;
 		if (!eat_routine(p))
-			break;
+			break ;
 		if (!simulation_finished(p->table))
 			print_status(p->table, p->id, SLEEPING);
 		precise_sleep(p->table, p->table->time_sleep);

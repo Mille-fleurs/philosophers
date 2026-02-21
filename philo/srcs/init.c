@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:24:34 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:05:46 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:36:32 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ static void	assign_forks(t_philo *p, t_fork *f, int pos)
 
 static int	init_fork(t_table *t, int *forks_inited)
 {
-	int i;
+	int	i;
 
 	*forks_inited = 0;
 	t->forks = malloc(t->philo_num * sizeof(t_fork));
@@ -45,7 +45,7 @@ static int	init_fork(t_table *t, int *forks_inited)
 			*forks_inited = i;
 			return (0);
 		}
-		t->forks[i].id= i;
+		t->forks[i].id = i;
 	}
 	*forks_inited = t->philo_num;
 	return (1);
@@ -53,7 +53,7 @@ static int	init_fork(t_table *t, int *forks_inited)
 
 static int	init_philo(t_table *t, int *philos_inited)
 {
-	int i;
+	int	i;
 
 	*philos_inited = 0;
 	t->philos = malloc(t->philo_num * sizeof(t_philo));
@@ -102,11 +102,11 @@ static int	init_table_mutexes(t_table *t)
 	return (1);
 }
 
-t_table *init_table(int ac, char **av)
+t_table	*init_table(int ac, char **av)
 {
-	t_table *t;
-	int	forks_inited;
-	int	philos_inited;
+	t_table	*t;
+	int		forks_inited;
+	int		philos_inited;
 
 	forks_inited = 0;
 	philos_inited = 0;
@@ -124,4 +124,3 @@ t_table *init_table(int ac, char **av)
 		return (cleanup_table(t, forks_inited, philos_inited), NULL);
 	return (t);
 }
-

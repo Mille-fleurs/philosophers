@@ -1,4 +1,14 @@
-
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parsing.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/21 21:48:05 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/21 23:37:21 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo_bonus.h"
 
@@ -71,9 +81,9 @@ int	parse_arg(t_table *t, int ac, char **av)
 		else if (i == 2)
 			t->time_to_die = res;
 		else if (i == 3)
-			t->time_eat = res;
+			t->time_to_eat = res;
 		else if (i == 4)
-			t->time_sleep = res;
+			t->time_to_sleep = res;
 		else if (i == 5)
 			t->meal_num = res;
 	}

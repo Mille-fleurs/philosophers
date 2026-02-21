@@ -4,13 +4,13 @@
 
 void	print_status(t_table *t, int p_index, t_status code)
 {
-    long long time;
+	long long	time;
 
 	if (!safe_mutex_handle(&t->print_mutex, LOCK))
 		return (end_on_error(t));
 	if (!simulation_finished(t) || code == DIED)
 	{
-    	time = (long long)(get_current_time() - t->start_time);
+		time = (long long)(get_current_time() - t->start_time);
 		if (code == EATING)
 			printf("%lld %d is eating\n", time, p_index);
 		else if (code == SLEEPING)

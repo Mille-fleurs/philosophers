@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/21 21:47:22 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/21 23:37:01 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "philo_bonus.h"
 
@@ -9,18 +20,20 @@
 static int open_global_sems(t_table *t, int i)
 {
 	t->sem_forks = sem_open(SEM_FORKS, O_CREAT, 0644, t->philo_num);
+	if (t->sem_forks == SEM_FAILED)
+		return (sem_failure(t, 0));
 	t->sem_print = sem_open(SEM_PRINT, O_CREAT, 0644, 1);
+	if (t->sem_print== SEM_FAILED)
+		return (sem_failure(t, 0));
 	t->sem_philo_full = sem_open(SEM_FULL, O_CREAT, 0644, t->philo_num);
+	if (t->sem_philo_full== SEM_FAILED)
+		return (sem_failure(t, 0));
 	t->sem_philo_dead = sem_open(SEM_DEAD, O_CREAT, 0644, t->philo_num);
+	if (t->sem_philo_dead== SEM_FAILED)
+		return (sem_failure(t, 0));
 	t->sem_stop = sem_open(SEM_STOP, O_CREAT, 0644, 1);
-	if (t->sem_forks == SEM_FAILED || t->sem_print == SEM_FAILED || t->sem_philo_full == SEM_FAILED
-		|| t->sem_philo_dead == SEM_FAILED || t->sem_stop == SEM_FAILED)
-	{
-		error_msg(STR_ERR_SEM, NULL, 0);
-		
-		
-	
-	}
+	if (t->sem_print== SEM_FAILED)
+		return (sem_failure(t, 0));
 }
 
 static char	*make_sem_meal_name(unsigned int id)
@@ -28,8 +41,22 @@ static char	*make_sem_meal_name(unsigned int id)
 
 }
 
-static bool	init_philos(t_table *t)
+static int	init_philos(t_table *t)
 {
+	int	i;
+	t_philo **p;
+
+	p = malloc(sizeof (t_philo *) * t->philo_num);
+	p = t->philos;
+	if (!p)
+		return (NULL);
+	i = 0;
+	while (i < t->philo_num)
+	{
+		p[i]->personal_death = pthread_create(t, NULL, )  
+	}
+
+
 
 }
 

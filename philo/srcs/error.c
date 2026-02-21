@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:24:05 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 19:11:12 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:36:58 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ int	error_msg(char *str, char *detail, int ret)
 
 static int	destroy_mutexes(t_table *t, int forks_inited, int philo_inited)
 {
-	int i;
+	int	i;
 
 	if (!t)
 		return (0);
@@ -48,7 +48,7 @@ static int	destroy_mutexes(t_table *t, int forks_inited, int philo_inited)
 	return (1);
 }
 
-void 	cleanup_table(t_table *t, int forks_inited, int philo_inited)
+void	cleanup_table(t_table *t, int forks_inited, int philo_inited)
 {
 	if (!t)
 		return ;
@@ -65,4 +65,3 @@ void 	cleanup_table(t_table *t, int forks_inited, int philo_inited)
 		t->philos = NULL;
 	}
 }
-

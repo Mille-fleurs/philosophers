@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 11:30:02 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:06:04 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:37:27 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,8 +46,8 @@ static int	ft_atoi(const char *str)
 
 int	is_valid_arg(int ac, char **av)
 {
-	int res;
-	int i;
+	int	res;
+	int	i;
 
 	res = 0;
 	i = 0;
@@ -89,4 +89,3 @@ int	parse_arg(t_table *t, int ac, char **av)
 	}
 	return (1);
 }
-

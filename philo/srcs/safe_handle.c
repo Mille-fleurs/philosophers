@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:49 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 22:05:54 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:37:33 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	handle_mutex_error(int status, t_op op)
 	else if (status == EPERM && op == UNLOCK)
 		printf("Thread tried to unlock a mutex it does not own.\n");
 	else if (status == EBUSY)
-		printf("Mutex busy (still locked/in use).\n");	
+		printf("Mutex busy (still locked/in use).\n");
 	else if (status == EDEADLK)
 		printf("Deadlock detected.\n");
 	else
@@ -31,9 +31,9 @@ void	handle_mutex_error(int status, t_op op)
 	return ;
 }
 
-int safe_mutex_handle( pthread_mutex_t *mtx, t_op code)
+int	safe_mutex_handle(pthread_mutex_t *mtx, t_op code)
 {
-	int status;
+	int	status;
 
 	if (code == LOCK)
 		status = pthread_mutex_lock(mtx);
@@ -91,5 +91,3 @@ int	safe_thread_handle(pthread_t *t, void *(*routine)(void *), void *arg,
 	}
 	return (1);
 }
-
-

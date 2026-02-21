@@ -1,41 +1,41 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/21 21:43:30 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:36:47 by chitoupa         ###   ########.fr       */
+/*   Created: 2026/02/21 21:41:50 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/21 23:37:04 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-int	ft_strlen(char *str)
+time_t	get_current_time(void)
 {
-	int len;
+	struct timeval	time;
 
-	len = 0;
-	while (str[len])
-		len++;
-	return (len);
+	if (gettimeofday(&time, NULL) == -1)
+		return (-1);
+	return ((time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
-char	*ft_strcat(char *dest, char *src)
+void	precise_sleep(t_table *t, long ms)
 {
-	int	i;
-	int	j;
+	time_t	start;
 
-	i = 0;
-	while (dest[i])
-		i++;
-	j = 0;
-	while (src[j])
+	start = get_current_time();
+	while (!simulation_finished(t))
 	{
-		dest[i + j] = src[j];
-		j++;
+		if ((get_current_time() - start) >= ms)
+			break;
+		usleep(200);
 	}
-	dest[i + j] = '\0';
-	return (dest);
+}
+
+void start_delay(time_t start_time)
+{
+	while (get_current_time() < start_time)
+		continue;
 }

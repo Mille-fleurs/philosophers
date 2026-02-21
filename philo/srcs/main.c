@@ -6,17 +6,17 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:46 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/20 21:16:58 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:36:26 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	write_outcome(t_table *table);
+void		write_outcome(t_table *table);
 
-static int create_mutex(t_table *t)
+static int	create_mutex(t_table *t)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (++i < t->philo_num)
@@ -86,7 +86,7 @@ static int	stop_simulation(t_table *t)
 int	main(int ac, char **av)
 {
 	t_table	*table;
-	int ret;
+	int		ret;
 
 	table = NULL;
 	ret = 0;
@@ -115,14 +115,14 @@ void	write_outcome(t_table *table)
 	i = 0;
 	while (i < table->philo_num)
 	{
-		if (get_int(&table->philos[i].philo_mutex, &table->philos[i].meals_eaten) >= (unsigned int)table->meal_num)
+		if (get_int(&table->philos[i].philo_mutex,
+				&table->philos[i].meals_eaten) >= (unsigned int)table->meal_num)
 			full_count++;
 		i++;
 	}
 	pthread_mutex_lock(&table->print_mutex);
-	printf("%d/%d philosophers had at least %d meals.\n",
-		full_count, table->philo_num, table->meal_num);
+	printf("%d/%d philosophers had at least %d meals.\n", full_count,
+		table->philo_num, table->meal_num);
 	pthread_mutex_unlock(&table->print_mutex);
 	return ;
 }
-

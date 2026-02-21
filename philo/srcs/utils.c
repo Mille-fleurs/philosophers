@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:01:43 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/17 15:44:08 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/21 23:37:44 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_strlen(char *str)
 {
-	int len;
+	int	len;
 
 	len = 0;
 	while (str[len])
@@ -39,7 +39,7 @@ void	precise_sleep(t_table *t, long ms)
 	while (!simulation_finished(t))
 	{
 		if ((get_current_time() - start) >= ms)
-			break;
+			break ;
 		usleep(200);
 	}
 }
