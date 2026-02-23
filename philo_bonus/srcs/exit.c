@@ -35,6 +35,18 @@ int sem_failure(t_table *t, int ret)
 	return (ret);
 }
 
+void	*init_failure_exit(pid_t *pids, t_table *t)
+{
+	if (t->pids)
+	{
+		free(t->pids);
+		t->pids = NULL;
+	}
+	sem_error_cleanup(t);
+	free(t);
+	return (NULL);
+}
+
 void	*error_null(char *s, char *details, t_table *t)
 {
 	if (t != NULL)

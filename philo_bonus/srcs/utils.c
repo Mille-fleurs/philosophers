@@ -39,3 +39,29 @@ char	*ft_strcat(char *dest, char *src)
 	dest[i + j] = '\0';
 	return (dest);
 }
+
+char	*ft_utoa(unsigned int n)
+{
+	char *res;
+	size_t		len;
+	unsigned int temp;
+
+	temp = n;
+	len = (n == 0);
+	while (temp > 0)
+	{
+		len++;
+		temp /= 10;
+	}
+	res = malloc(len + 1);
+	if (!res)
+		return (NULL);
+	res[len] = '\0';
+	len--;
+	while (n % 10)
+	{
+		res[len--] = n % 10 + '0';
+		n /= 10;
+	}
+	return (res);
+}

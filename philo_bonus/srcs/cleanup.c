@@ -39,7 +39,7 @@ void *free_table(t_table *t)
     return (NULL);
 }
 
-void 	unlink_grobal_sems(t_table *t)
+void 	unlink_global_sems()
 {
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_PRINT);
@@ -53,14 +53,15 @@ int     sem_error_cleanup(t_table *t)
     if (t->sem_forks)
         sem_close(t->sem_forks);
     if (t->sem_print)
-	    sem_clone(t->sem_print);
+	    sem_close(t->sem_print);
     if (t->sem_philo_full)
 	    sem_close(t->sem_philo_full);
     if (t->sem_philo_dead)
 	    sem_close(t->sem_philo_dead);
     if (t->sem_stop)
 	    sem_close(t->sem_stop);
-	unlink_global_sems(t);
+	unlink_global_sems();
+    return (0);
 }
 
 int 	cleanup_table(t_table *t, int exit_code)
@@ -74,7 +75,7 @@ int 	cleanup_table(t_table *t, int exit_code)
 	sem_close(t->sem_philo_full);
 	sem_close(t->sem_philo_dead);
 	sem_close(t->sem_stop);
-	unlink_global_sems(t);
+	unlink_global_sems();
 	free_table(t);
     return (exit_code);
 }

@@ -72,7 +72,7 @@ typedef struct s_philo
 	unsigned int		id;
 	unsigned int		meals_eaten;
 	int					is_full;
-	long				last_meal;
+	long				last_meal_time;
 	t_table				*table;
 }						t_philo;
 
@@ -90,8 +90,8 @@ typedef struct s_table
 	sem_t				*sem_philo_full;
 	sem_t				*sem_philo_dead;
 	unsigned int		full_philo_num;
-	int					end;
-	pid_t				pids;
+	int					sim_stop;
+	pid_t				*pids;
 	pthread_t			meal_monitor;
 	pthread_t			death_monitor;
 	t_philo				**philos;
@@ -117,7 +117,7 @@ time_t					get_current_time(void);
 void					precise_sleep(t_table *t, long ms);
 void					start_delay(time_t start_time);
 void					*free_table(t_table *t);
-void					unlink_grobal_sems(t_table *t);
+void					unlink_global_sems(void);
 int						sem_error_cleanup(t_table *t);
 int						cleanup_table(t_table *t, int exit_code);
 int						error_msg(char *str, char *detail, int ret);

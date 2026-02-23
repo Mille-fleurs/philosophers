@@ -12,7 +12,7 @@
 
 #include "philo_bonus.h"
 
-static void    kill_philos(t_table *t, int exit_code)
+int    kill_philos(t_table *t, int exit_code)
 {
     unsigned int    i;
 
@@ -24,3 +24,7 @@ static void    kill_philos(t_table *t, int exit_code)
     }
     return (exit_code);
 }
+
+// void	*personal_death_monitor(void *data);
+// void    *meal_monitor(void *data);
+// void    *death_monitor(void *data);
