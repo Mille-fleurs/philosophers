@@ -40,7 +40,9 @@ void	*personal_death_monitor(void *data)
     }
     if (get_current_time() - lm_time >= p->table->time_to_die)
     {
-        
+        sem_wait(p->sem_philo_dead);
+        print_status(p, 1, DIED);
+        sem_wait(p->sem_philo_dead);
     }
     eaten = get_int(p->sem_meal, &p->meals_eaten);
     if (eaten != -1 && eaten == p->table->meal_num)
