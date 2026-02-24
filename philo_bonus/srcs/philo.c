@@ -6,11 +6,28 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:48:23 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:37:13 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/24 20:40:00 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
+
+void take_forks(t_philo *p)
+{
+    int fork_num;
+
+    sem_wait(p->sem_forks);
+    fork_num = get_int(p->sem_meal, p->fork_num);
+    if (fork_num == 0)
+        print_status(p, 0, GOT_FORK_1);
+    if (fork_num == 1)
+        print_status(p, 0, GOT_FORK_2);
+    set_int(p->sem_meal, )
+
+    
+}
+
+
 
 
 /*

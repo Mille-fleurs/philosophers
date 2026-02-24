@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:47:44 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:36:55 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/24 20:40:04 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,41 @@ int    kill_philos(t_table *t, int exit_code)
         i++;
     }
     return (exit_code);
+}
+
+// A) philo->personal_dead (inside each philosopher process)
+// Role: local watchdog for this philosopher only.
+// Runs in the philosopher child process.
+// Periodically checks: now - last_meal >= time_to_die.
+// Also checks “ate enough” and, once, notifies the global counter.
+// If it detects death:
+// prints died (protected by print semaphore),
+// signals one global “death happened” semaphore (sem_philo_dead),
+// then it can stop (the global monitor will kill everyone).
+// Key rule: it must read last_meal under a per-philo protection semaphore/mutex (sem_meal) to avoid races with the eating routine that updates last_meal.
+
+int     end_conditon_mets(t_table *t, t_philo *p)
+{
+    time_t last_time_meal;
+    int     eaten;
+
+    last_time_meal = get_time_t(p->sem_meal, p->last_meal_time);
+    if (get_current_time - t->start_time >= t->time_to_die)
+    {
+        print_status(p, 1, DIED);
+        sem_post(t->current_philo->sem_philo_dead);
+        return (1);
+    }
+    eaten = get_int(p->sem_meal, p->meals_eaten);
+    if (t->meal_num != 1 && eaten >= t->meal_num)
+    {
+        sem_post(t->current_philo->sem_philo_full);
+        set_int(p->)
+
+    }
+
+
+
 }
 
 void	*personal_death_monitor(void *data)
@@ -54,24 +89,21 @@ void	*personal_death_monitor(void *data)
 
 }
 
+void    *meal_monitor(void *data)
+{
+    t_table *t;
 
+    t = (t_table *)data;
 
-// void    *meal_monitor(void *data);
+    sem_wait(t->sem_philo_dead);
+    sem_wait()
+}
 // void    *death_monitor(void *data);
 
 /*
 1) What each monitor is responsible for
 
-A) philo->personal_dead (inside each philosopher process)
-Role: local watchdog for this philosopher only.
-Runs in the philosopher child process.
-Periodically checks: now - last_meal >= time_to_die.
-Also checks “ate enough” and, once, notifies the global counter.
-If it detects death:
-prints died (protected by print semaphore),
-signals one global “death happened” semaphore (sem_philo_dead),
-then it can stop (the global monitor will kill everyone).
-Key rule: it must read last_meal under a per-philo protection semaphore/mutex (sem_meal) to avoid races with the eating routine that updates last_meal.
+
 
 B) table->death_monitor (parent process)
 Role: global reaper for death.
