@@ -89,4 +89,3 @@ int	parse_arg(t_table *t, int ac, char **av)
 	}
 	return (1);
 }
-

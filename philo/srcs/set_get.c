@@ -62,6 +62,8 @@ int	simulation_finished(t_table *t)
 
 	ret = get_int(&t->end_mutex, &t->end);
 	if (ret < 0)
+		return (ret);
+	if (ret == 0)
 	{
 		set_int(&t->end_mutex, &t->end, 1);
 		return (1);

@@ -92,7 +92,7 @@ static int	init_philos(t_table *t)
 	return (1);
 }
 
-t_table *init_table(int ac, char **av, int i)
+t_table *init_table(int ac, char **av)
 {
 	t_table *t;
 	
@@ -110,6 +110,7 @@ t_table *init_table(int ac, char **av, int i)
 	t->pids = malloc(sizeof(pid_t) * t->philo_num);
 	if (!t->pids)
 		return (init_failure_exit(NULL, t));
+	memset(t->pids, 0, sizeof(pid_t) * t->philo_num);
 	if (!init_philos(t))
 		return (init_failure_exit(t->pids, t));
 	return (t);

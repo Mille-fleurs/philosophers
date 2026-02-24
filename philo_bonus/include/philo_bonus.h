@@ -39,7 +39,7 @@ not a valid unsigned integer between 0 and 2147483647.\n"
 # define STR_ERR_INPUT_POFLOW \
 	"%s invalid input: \
 there must be between 1 and %s philosophers.\n"
-# define STR_ERR_THREAD "%s error: Could not create thread.\n"
+# define STR_ERR_PTHREAD "%s error: Could not create thread.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_GETTIME "%s error: Could not get current time.\n"
 # define STR_ERR_SEM "%s error: Could not create semaphore.\n"
@@ -70,7 +70,7 @@ typedef struct s_philo
 	char				*sem_meal_name;
 	unsigned int		fork_num;
 	unsigned int		id;
-	unsigned int		meals_eaten;
+	int					meals_eaten;
 	int					is_full;
 	long				last_meal_time;
 	t_table				*table;
