@@ -108,17 +108,16 @@ int	main(int ac, char **av)
 
 void	write_outcome(t_table *table)
 {
-	unsigned int	i;
-	unsigned int	full_count;
+	int	i;
+	int	full_count;
 
 	full_count = 0;
-	i = 0;
-	while (i < table->philo_num)
+	i = -1;
+	while (++i < table->philo_num)
 	{
 		if (get_int(&table->philos[i].philo_mutex,
-				&table->philos[i].meals_eaten) >= (unsigned int)table->meal_num)
+				&table->philos[i].meals_eaten) >= table->meal_num)
 			full_count++;
-		i++;
 	}
 	pthread_mutex_lock(&table->print_mutex);
 	printf("%d/%d philosophers had at least %d meals.\n", full_count,
