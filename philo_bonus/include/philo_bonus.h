@@ -61,14 +61,13 @@ typedef struct s_table	t_table;
 
 typedef struct s_philo
 {
-	pthread_t			personal_death;
+	pthread_t			personal_monitor;
 	sem_t				*sem_forks;
 	sem_t				*sem_print;
 	sem_t				*sem_philo_full;
 	sem_t				*sem_philo_dead;
 	sem_t				*sem_meal;
 	char				*sem_meal_name;
-	unsigned int		fork_num;
 	unsigned int		id;
 	int					meals_eaten;
 	int					is_full;
@@ -79,23 +78,21 @@ typedef struct s_philo
 typedef struct s_table
 {
 	unsigned int		philo_num;
-	time_t				start_time;
-	time_t				time_to_die;
-	time_t				time_to_eat;
-	time_t				time_to_sleep;
+	long				start_time;
+	int					time_to_die;
+	int					time_to_eat;
+	int					time_to_sleep;
 	int					meal_num;
 	sem_t				*sem_forks;
 	sem_t				*sem_print;
 	sem_t				*sem_stop;
 	sem_t				*sem_philo_full;
 	sem_t				*sem_philo_dead;
-	unsigned int		full_philo_num;
 	int					sim_stop;
 	pid_t				*pids;
 	pthread_t			meal_monitor;
 	pthread_t			death_monitor;
 	t_philo				**philos;
-	t_philo				*current_philo;
 }						t_table;
 
 typedef enum s_status
@@ -110,19 +107,25 @@ typedef enum s_status
 
 int						is_valid_arg(int ac, char **av);
 int						parse_arg(t_table *t, int ac, char **av);
-void					print_status(t_philo *philo, int sim_finished,
-							t_status code);
-int						ft_strlen(char *str);
+t_table 				*init_table(int ac, char **av);
+void    				*philosopher(void *data);
+void					*personal_monitor(void *data);
+void    				*meal_monitor(void *data);
+void    				*death_monitor(void *data);
+void					print_status(t_philo *philo, t_status code);
 time_t					get_current_time(void);
-void					precise_sleep(t_table *t, long ms);
-void					start_delay(time_t start_time);
+void					precise_sleep(long ms);
+int    					kill_philos(t_table *t, int exit_code);
 void					*free_table(t_table *t);
 void					unlink_global_sems(void);
 int						sem_error_cleanup(t_table *t);
 int						cleanup_table(t_table *t, int exit_code);
 int						error_msg(char *str, char *detail, int ret);
-int						error_failure(char *s, char *details, t_table *t);
+int						error_failure(char *s, char *details, t_table *t, int child_id);
 int 					sem_failure(t_table *t, int ret);
-void					*error_null(char *s, char *details, t_table *t);
+void					*init_failure_exit(t_table *t);
+int						ft_strlen(char *str);
+char					*ft_strcat(char *dest, char *src);
+char					*ft_utoa(unsigned int n);
 
 #endif

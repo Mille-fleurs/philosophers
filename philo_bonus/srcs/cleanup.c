@@ -12,6 +12,19 @@
 
 #include "philo_bonus.h"
 
+int    kill_philos(t_table *t, int exit_code)
+{
+    unsigned int    i;
+
+    i = 0;
+    while (i < t->philo_num)
+    {
+        kill(t->pids[i], SIGKILL);
+        i++;
+    }
+    return (exit_code);
+}
+
 void *free_table(t_table *t)
 {
     unsigned int i;
@@ -39,7 +52,7 @@ void *free_table(t_table *t)
     return (NULL);
 }
 
-void 	unlink_global_sems()
+void 	unlink_global_sems(void)
 {
 	sem_unlink(SEM_FORKS);
 	sem_unlink(SEM_PRINT);
@@ -67,11 +80,11 @@ int     sem_error_cleanup(t_table *t)
 int 	cleanup_table(t_table *t, int exit_code)
 {
 	if (!t)
-		return ;
+		return (exit_code);
 	pthread_join(t->meal_monitor, NULL);
 	pthread_join(t->death_monitor, NULL);
 	sem_close(t->sem_forks);
-	sem_clone(t->sem_print);
+	sem_close(t->sem_print);
 	sem_close(t->sem_philo_full);
 	sem_close(t->sem_philo_dead);
 	sem_close(t->sem_stop);

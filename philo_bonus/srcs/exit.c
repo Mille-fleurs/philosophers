@@ -21,11 +21,13 @@ int	error_msg(char *str, char *detail, int ret)
 	return (ret);
 }
 
-int	error_failure(char *s, char *details, t_table *t)
+int	error_failure(char *s, char *details, t_table *t, int child_id)
 {
-	if (t != NULL)
+	if (t && child_id > 0)
+		kill_philos(t, EXIT_FAILURE);
+	if (t)
 		free_table(t);
-	return (msg(s, details, 0));
+	return (error_msg(s, details, 0));
 }
 
 int sem_failure(t_table *t, int ret)
@@ -35,7 +37,7 @@ int sem_failure(t_table *t, int ret)
 	return (ret);
 }
 
-void	*init_failure_exit(pid_t *pids, t_table *t)
+void	*init_failure_exit(t_table *t)
 {
 	if (t->pids)
 	{
@@ -47,12 +49,3 @@ void	*init_failure_exit(pid_t *pids, t_table *t)
 	return (NULL);
 }
 
-void	*error_null(char *s, char *details, t_table *t)
-{
-	if (t != NULL)
-		free_table(t);
-	msg(s, details, EXIT_FAILURE);
-	return (NULL);
-}
-
-// void child_exit : to do

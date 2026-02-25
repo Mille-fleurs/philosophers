@@ -21,21 +21,11 @@ time_t	get_current_time(void)
 	return ((time.tv_sec * 1000 + time.tv_usec / 1000));
 }
 
-void	precise_sleep(t_table *t, long ms)
+void	precise_sleep(long ms)
 {
-	time_t	start;
+	long long	start;
 
 	start = get_current_time();
-	while (!simulation_finished(t))
-	{
-		if ((get_current_time() - start) >= ms)
-			break;
+	while ((get_current_time() - start) >= ms)
 		usleep(200);
-	}
-}
-
-void start_delay(time_t start_time)
-{
-	while (get_current_time() < start_time)
-		continue;
 }

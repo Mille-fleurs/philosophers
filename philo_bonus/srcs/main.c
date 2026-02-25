@@ -12,31 +12,42 @@
 
 #include "philo_bonus.h"
 
+static int	create_parents_thread(t_table *t)
+{
+	if (t->meal_num == -1)
+	{
+		if (pthread_create(&t->meal_monitor, NULL, meal_monitor, t) != 0)
+			return (0);
+	}
+	if (pthread_create(&t->death_monitor, NULL, death_monitor, t) != 0)
+		return (0);
+	return (1);
+}
+
 static int	start_simulation(t_table *t)
 {
-	int		i;
+	unsigned int		i;
 	pid_t	pid;
+	t_philo	*p;
 
 	t->start_time = get_current_time() + (t->philo_num * 2 * 10);
-	i = 0;
-	while (i < t->philo_num)
+	i = -1;
+	while (++i < t->philo_num)
 	{
 		pid = fork();
 		if (pid < 0)
-		{
-			kill_philos(t, 0);
-			return (error_failure(STR_ERR_FORK, NULL, t));
-		}
+			return (error_failure(STR_ERR_FORK, NULL, t, i));
 		if (pid > 0) //parent
 			t->pids[i] = pid;
 		if (pid == 0) //child
 		{
-			t->current_philo = t->philos[i];
-			philosopher(t);
+			p = t->philos[i];
+			philosopher(p);
 			exit(EXIT_SUCCESS);
 		}
-		i++;
 	}
+	if (!create_parents_thread(t))
+		return (error_failure(STR_ERR_PTHREAD, NULL, t, i));
 	return (1);
 }
 
@@ -71,7 +82,7 @@ static int	handle_child_exit(pid_t *pid)
 
 static int	stop_simulation(t_table *t)
 {
-	int	i;
+	unsigned int	i;
 	int res;
 	unsigned int full_count;
 	
@@ -93,7 +104,7 @@ static int	stop_simulation(t_table *t)
 			}
 			i++;
 		}
-		precise_sleep(t, 1);
+		precise_sleep(1);
 	}
 	return (0);
 }
@@ -101,15 +112,13 @@ static int	stop_simulation(t_table *t)
 int	main(int ac, char **av)
 {
 	t_table	*table;
-	int ret;
 
 	table = NULL;
-	ret = 0;
 	if (ac != 5 && ac != 6)
 		return (error_msg(STR_USAGE, NULL, EXIT_FAILURE));
 	if (!is_valid_arg(ac, av))
 		return (EXIT_FAILURE);
-	table = init_table(ac, av, 1);
+	table = init_table(ac, av);
 	if (!table)
 		return (EXIT_FAILURE);
 	if (!start_simulation(table))

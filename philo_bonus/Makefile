@@ -9,17 +9,16 @@ INCLUDE     = include
 
 SRCS    	= srcs/main.c \
 			  srcs/philo.c \
-			  srcs/philo_utils.c \
 			  srcs/monitor.c \
 			  srcs/init.c \
 			  srcs/output.c \
-			  srcs/set_get.c \
-			  srcs/safe_handle.c \
 			  srcs/parsing.c \
-			  srcs/error.c \
+			  srcs/cleanup.c \
+			  srcs/exit.c \
+			  srcs/time.c \
 			  srcs/utils.c
 
-OBJS    = $(SRCS:.c=.o)
+OBJS    	= $(SRCS:.c=.o)
 
 all: $(NAME)
 

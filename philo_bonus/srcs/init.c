@@ -55,17 +55,14 @@ static int init_one_philo(t_table *t, t_philo **p, int pos)
 	*p = malloc(sizeof(t_philo));
 	if (!*p)
 		return (0);
+	memset(*p, 0, sizeof(t_philo));
 	(*p)->table = t;
 	(*p)->id = pos + 1;
-	(*p)->meals_eaten = 0;
-	(*p)->is_full = 0;
-	(*p)->last_meal_time = 0;
-	(*p)->personal_death = (pthread_t)0;
 	(*p)->sem_forks = t->sem_forks;
 	(*p)->sem_print = t->sem_print;
 	(*p)->sem_philo_full = t->sem_philo_full;
 	(*p)->sem_philo_dead = t->sem_philo_dead;
-	(*p)->sem_meal_name = set_local_sem_name(SEM_MEAL, (*p)->id);
+	(*p)->sem_meal_name = make_sem_meal_name(SEM_MEAL, (*p)->id);
 	if (!(*p)->sem_meal_name)
 		return (0);
 	(*p)->sem_meal = NULL;
@@ -74,19 +71,18 @@ static int init_one_philo(t_table *t, t_philo **p, int pos)
 
 static int	init_philos(t_table *t)
 {
-	int	i;
+	unsigned int	i;
 	
 	t->philos = NULL;
-	t->current_philo = NULL;
 	t->philos = malloc(sizeof (t_philo *) * t->philo_num);
 	if (!t->philos)
-		return (error_failure(STR_ERR_MALLOC, NULL, t));
+		return (error_failure(STR_ERR_MALLOC, NULL, t, 0));
 	i = 0;
 	while (i < t->philo_num)
 	{
 		t->philos[i] = NULL;
 		if (!init_one_philo(t, &t->philos[i], i))
-			return (error_failure(STR_ERR_MALLOC, NULL, t));
+			return (error_failure(STR_ERR_MALLOC, NULL, t, 0));
 		i++;
 	}
 	return (1);
@@ -109,10 +105,9 @@ t_table *init_table(int ac, char **av)
 		return (free(t), NULL);
 	t->pids = malloc(sizeof(pid_t) * t->philo_num);
 	if (!t->pids)
-		return (init_failure_exit(NULL, t));
+		return (init_failure_exit(t));
 	memset(t->pids, 0, sizeof(pid_t) * t->philo_num);
 	if (!init_philos(t))
-		return (init_failure_exit(t->pids, t));
+		return (init_failure_exit(t));
 	return (t);
 }
-

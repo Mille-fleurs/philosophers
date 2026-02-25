@@ -32,7 +32,7 @@ int	set_long(sem_t *lock, long *dest, long value)
 	return (1);
 }
 
-time_t	get_time_ms(sem_t *lock, long *src)
+long	get_long(sem_t *lock, long *src)
 {
 	long	ret;
 
@@ -43,14 +43,3 @@ time_t	get_time_ms(sem_t *lock, long *src)
         return (-1);
 	return (ret);
 }
-
-int		simulation_finihsed(t_table *t)
-{
-	int	ret;
-
-	sem_wait(t->sem_stop);
-	ret = t->sim_stop;
-	sem_post(t->sem_stop);
-	return (ret);
-}
-
