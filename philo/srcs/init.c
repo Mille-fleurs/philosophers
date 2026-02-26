@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:24:34 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/26 18:58:30 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/26 22:04:04 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ static int	init_philo(t_table *t, int *philos_inited)
 		t->philos[i].table = t;
 		t->philos[i].last_meal_time = 0;
 		assign_forks(&t->philos[i], t->forks, i);
-		printf("%sPhilo[%d], first_f:%d, second_f:%d %s\n", RED, i + 1, t->philos[i].first_f->id, t->philos[i].second_f->id, NC);
+		printf("%sPhilo[%d], first_f:%d, second_f:%d%s\n", RED, i + 1, t->philos[i].first_f->id, t->philos[i].second_f->id, NC);
 	}
 	*philos_inited = t->philo_num;
 	return (1);
