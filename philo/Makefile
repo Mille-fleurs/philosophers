@@ -1,8 +1,6 @@
 NAME         = philo
-
 CC          = cc 
-CFLAGS      = -Wall -Wextra -Werror -g
-DEBUG_FLAGS = -g3 -O0 -fsanitize=address,undefined
+CFLAGS      = -Wall -Wextra -Werror -pthread
 RM          = rm -rf
 
 INCLUDE     = include
@@ -21,16 +19,34 @@ SRCS    	= srcs/main.c \
 
 OBJS    = $(SRCS:.c=.o)
 
+ifeq ($(DEBUG),1)
+    CFLAGS += -g3 -O0 -fno-omit-frame-pointer
+endif
+
+ifeq ($(ASAN),1)
+    CFLAGS += -fsanitize=address,undefined
+endif
+
+ifeq ($(TSAN),1)
+    CFLAGS += -fsanitize=thread
+endif
+
 all: $(NAME)
 
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -pthread -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 %.o: %.c 
 	$(CC) $(CFLAGS) -pthread -I$(INCLUDE) -c $< -o $@
+	
+debug:
+	$(MAKE) DEBUG=1 re
 
-debug: CFLAGS += $(DEBUG_FLAGS)
-debug: re
+tsan:
+	$(MAKE) TSAN=1 re
+
+asan:
+	$(MAKE) ASAN=1 re
 
 clean:
 	$(RM) $(OBJS)

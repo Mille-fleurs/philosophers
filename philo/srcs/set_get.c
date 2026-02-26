@@ -6,53 +6,43 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/14 15:23:57 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:37:40 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/26 17:05:39 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	set_int(pthread_mutex_t *mtx, int *dest, int value)
+void	set_int(pthread_mutex_t *mtx, int *dest, int value)
 {
-	if (!safe_mutex_handle(mtx, LOCK))
-		return (0);
+	safe_mutex_handle(mtx, LOCK);
 	*dest = value;
-	if (!safe_mutex_handle(mtx, UNLOCK))
-		return (0);
-	return (1);
+	safe_mutex_handle(mtx, UNLOCK);
 }
 
 int	get_int(pthread_mutex_t *mtx, int *src)
 {
 	int	ret;
 
-	if (!safe_mutex_handle(mtx, LOCK))
-		return (-1);
+	safe_mutex_handle(mtx, LOCK);
 	ret = *src;
-	if (!safe_mutex_handle(mtx, UNLOCK))
-		return (-1);
+	safe_mutex_handle(mtx, UNLOCK);
 	return (ret);
 }
 
-int	set_long(pthread_mutex_t *mtx, long *dest, long value)
+void	set_long(pthread_mutex_t *mtx, long *dest, long value)
 {
-	if (!safe_mutex_handle(mtx, LOCK))
-		return (0);
+	safe_mutex_handle(mtx, LOCK);
 	*dest = value;
-	if (!safe_mutex_handle(mtx, UNLOCK))
-		return (0);
-	return (1);
+	safe_mutex_handle(mtx, UNLOCK);
 }
 
 long	get_long(pthread_mutex_t *mtx, long *src)
 {
 	long	ret;
 
-	if (!safe_mutex_handle(mtx, LOCK))
-		return (-1);
+	safe_mutex_handle(mtx, LOCK);
 	ret = *src;
-	if (!safe_mutex_handle(mtx, UNLOCK))
-		return (-1);
+	safe_mutex_handle(mtx, UNLOCK);
 	return (ret);
 }
 
@@ -61,12 +51,5 @@ int	simulation_finished(t_table *t)
 	int	ret;
 
 	ret = get_int(&t->end_mutex, &t->end);
-	if (ret < 0)
-		return (ret);
-	if (ret == 0)
-	{
-		set_int(&t->end_mutex, &t->end, 1);
-		return (1);
-	}
 	return (ret);
 }

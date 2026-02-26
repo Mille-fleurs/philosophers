@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 12:01:43 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:37:44 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/26 13:53:46 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	precise_sleep(t_table *t, long ms)
 	start = get_current_time();
 	while (!simulation_finished(t))
 	{
-		if ((get_current_time() - start) >= ms)
+		if ((get_current_time() - start) <= ms)
 			break ;
 		usleep(200);
 	}

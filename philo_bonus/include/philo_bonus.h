@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:45:58 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/24 20:39:55 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/26 17:56:31 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,12 @@ there must be between 1 and %s philosophers.\n"
 # define CHILD_EXIT_ERR_SEM 41
 # define CHILD_EXIT_PHILO_FULL 42
 # define CHILD_EXIT_PHILO_DEAD 43
+
+# define NC		"\e[0m"
+# define RED	"\e[31m"
+# define GREEN	"\e[32m"
+# define PURPLE	"\e[35m"
+# define CYAN	"\e[36m"
 
 typedef struct s_table	t_table;
 

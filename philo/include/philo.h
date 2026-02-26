@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:36:42 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/26 18:14:54 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,12 @@ there must be between 1 and %s philosophers.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_MUTEX "%s error: Could not create mutex.\n"
 # define STR_ERR_GETTIME "%s error: Could not get current time.\n"
+
+# define NC		"\e[0m"
+# define RED	"\e[31m"
+# define GREEN	"\e[32m"
+# define PURPLE	"\e[35m"
+# define CYAN	"\e[36m"
 
 typedef struct s_table	t_table;
 
@@ -114,11 +120,8 @@ typedef enum s_status
 
 void					*philosopher(void *data);
 int						preparation(t_table *t);
-int						wait_until_ready(t_table *t);
 void					only_one_philo(t_table *t);
 void					end_on_error(t_table *t);
-int						unlock_forks_return(t_philo *p, int must_set);
-int						unlock_forks_end(t_philo *p, int must_set);
 void					print_status(t_table *t, int p_index, t_status code);
 void					*monitor(void *data);
 int						is_valid_arg(int ac, char **av);
@@ -129,9 +132,9 @@ int						safe_mutex_handle(pthread_mutex_t *mtx, t_op code);
 void					handle_thread_error(int status, t_op op);
 int						safe_thread_handle(pthread_t *t,
 							void *(*routine)(void *), void *arg, t_op op);
-int						set_int(pthread_mutex_t *mtx, int *dest, int value);
+void					set_int(pthread_mutex_t *mtx, int *dest, int value);
 int						get_int(pthread_mutex_t *mtx, int *value);
-int						set_long(pthread_mutex_t *mtx, long *dest, long value);
+void					set_long(pthread_mutex_t *mtx, long *dest, long value);
 long					get_long(pthread_mutex_t *mtx, long *value);
 int						simulation_finished(t_table *t);
 void					cleanup_table(t_table *t, int forks_inited,

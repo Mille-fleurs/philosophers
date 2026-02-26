@@ -6,8 +6,7 @@ void	print_status(t_table *t, int p_index, t_status code)
 {
 	long long	time;
 
-	if (!safe_mutex_handle(&t->print_mutex, LOCK))
-		return (end_on_error(t));
+	safe_mutex_handle(&t->print_mutex, LOCK);
 	if (!simulation_finished(t) || code == DIED)
 	{
 		time = (long long)(get_current_time() - t->start_time);
@@ -22,8 +21,7 @@ void	print_status(t_table *t, int p_index, t_status code)
 		else if (code == DIED)
 			printf("%lld %d died\n", time, p_index);
 	}
-	if (!safe_mutex_handle(&t->print_mutex, UNLOCK))
-		return (end_on_error(t));
+	safe_mutex_handle(&t->print_mutex, UNLOCK);
 }
 
 // # define NC		"\e[0m"
