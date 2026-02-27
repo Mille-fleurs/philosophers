@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:45:24 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/26 22:03:58 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/27 09:00:43 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,11 @@ static void	eat_routine(t_philo *p)
 {
 	int	meals;
 
+	if (!simulation_finished(p->table))
+	{
+		safe_mutex_handle(&p->second_f->mutex, UNLOCK);
+		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
+	}
 	set_long(&p->philo_mutex, &p->last_meal_time, get_current_time());
 	if (!simulation_finished(p->table))
 		print_status(p->table, p->id, EATING);
@@ -32,9 +37,11 @@ static void	take_fork(t_philo *p)
 {
 	safe_mutex_handle(&p->first_f->mutex, LOCK);
 	if (simulation_finished(p->table))
+	{
 		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
-	if (!simulation_finished(p->table))
-		print_status(p->table, p->id, GOT_FORK_1);
+		return ;
+	}
+	print_status(p->table, p->id, GOT_FORK_1);
 	safe_mutex_handle(&p->second_f->mutex, LOCK);
 	if (simulation_finished(p->table))
 	{
@@ -42,8 +49,7 @@ static void	take_fork(t_philo *p)
 		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
 		return ;
 	}
-	if (!simulation_finished(p->table))
-		print_status(p->table, p->id, GOT_FORK_2);
+	print_status(p->table, p->id, GOT_FORK_2);
 }
 
 static void	think_routine(t_philo *p, int silent)
@@ -52,11 +58,6 @@ static void	think_routine(t_philo *p, int silent)
 	long	last_meal_time;
 
 	last_meal_time = get_long(&p->philo_mutex, &p->last_meal_time);
-	if (last_meal_time == -1)
-	{
-		set_int(&p->table->end_mutex, &p->table->end, 1);
-		return ;
-	}
 	time_to_think = (p->table->time_die - (get_current_time() - last_meal_time)
 			- p->table->time_eat) / 2;
 	if (time_to_think < 0)
