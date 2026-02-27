@@ -1,12 +1,22 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   set_get.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/02/27 09:17:47 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/02/27 10:14:29 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_bonus.h"
 
-int	set_int(sem_t *lock, int *dest, int value)
+void	set_int(sem_t *lock, int *dest, int value)
 {
-	if (sem_wait(lock) == -1)
-        return (0);
+	sem_wait(lock);
 	*dest = value;
-	if (sem_post(lock) == -1)
-        return (0);
+	sem_post(lock);
 	return (1);
 }
 
@@ -14,32 +24,25 @@ int	get_int(sem_t *lock, int *src)
 {
 	int	ret;
 
-	if (sem_wait(lock) == -1)
-        return (-1);
+	sem_wait(lock);
 	ret = *src;
-	if (sem_post(lock) == -1)
-        return (-1);
+	sem_post(lock);
 	return (ret);
 }
 
 int	set_long(sem_t *lock, long *dest, long value)
 {
-	if (sem_wait(lock) == -1)
-        return (0);
+	sem_wait(lock);
 	*dest = value;
-	if (sem_post(lock) == -1)
-        return (0);
-	return (1);
+	sem_post(lock);
 }
 
 long	get_long(sem_t *lock, long *src)
 {
 	long	ret;
 
-	if (sem_wait(lock) == -1)
-        return (-1);
+	sem_wait(lock);
 	ret = *src;
-	if (sem_post(lock) == -1)
-        return (-1);
+	sem_post(lock);
 	return (ret);
 }

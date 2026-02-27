@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:45:24 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/27 09:00:43 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/27 21:08:40 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static void	eat_routine(t_philo *p)
 {
 	int	meals;
 
-	if (!simulation_finished(p->table))
+	if (simulation_finished(p->table))
 	{
 		safe_mutex_handle(&p->second_f->mutex, UNLOCK);
 		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
@@ -87,12 +87,14 @@ void	*philosopher(void *data)
 	{
 		take_fork(p);
 		printf("%s%ld ms : philo[%d] taken two forks%s\n", CYAN, get_current_time(), p->id, NC);
-		eat_routine(p);
+		if (!simulation_finished(p->table))
+			eat_routine(p);
 		printf("%s%ld ms : philo[%d] finish to eat%s\n", CYAN, get_current_time(), p->id, NC);
 		if (!simulation_finished(p->table))
 			print_status(p->table, p->id, SLEEPING);
 		precise_sleep(p->table, p->table->time_sleep);
-		think_routine(p, 0);
+		if (!simulation_finished(p->table))
+			think_routine(p, 0);
 	}
 	return (NULL);
 }

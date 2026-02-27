@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:41:35 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/27 09:51:54 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/27 21:08:37 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,10 @@ static int	is_dead(t_table *t, t_philo *p)
 	return (0);
 }
 
-static int	is_full(t_table *t, t_philo *p, int *full_count)
+static int	all_full(t_table *t, t_philo *p, int *full_count)
 {
 	int	is_full;
 
-	if (t->meal_num == -1)
-		return (0);
 	is_full = get_int(&p->philo_mutex, &p->is_full);
 	if (is_full == 1)
 		(*full_count)++;
@@ -64,7 +62,7 @@ void	*monitor(void *data)
 				kill_philo(t, i + 1);
 				return (NULL);
 			}
-			if (is_full(t, &t->philos[i], &full_count))
+			if (all_full(t, &t->philos[i], &full_count))
 			{
 				set_int(&t->end_mutex, &t->end, 1);
 				return (NULL);

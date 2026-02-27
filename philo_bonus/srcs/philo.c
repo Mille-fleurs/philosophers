@@ -6,13 +6,13 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:48:23 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/24 20:40:00 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/02/27 13:02:04 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static void    *only_one_philo(t_philo *p)
+void    *only_one_philo(t_philo *p)
 {
     sem_wait(p->sem_forks);
     print_status(p, GOT_FORK_1);
@@ -21,7 +21,7 @@ static void    *only_one_philo(t_philo *p)
     return (NULL);
 }
 
-static void eat_sleep_fork(t_philo *p)
+static void eat_rountine(t_philo *p)
 {
     sem_wait(p->sem_forks);
     print_status(p, GOT_FORK_1);
