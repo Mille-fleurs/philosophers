@@ -44,10 +44,26 @@ static int	ft_atoi(const char *str)
 	return ((int)res);
 }
 
+static char *get_arg(int pos)
+{
+	char *ret;
+
+	ret = NULL;
+	if (pos == 2)
+		ret = "time_to_die";
+	else if (pos == 3)
+		ret = "time_to_eat";
+	else if (pos == 4)
+		ret = "time_to_sleep";
+	else if (pos == 5)
+		ret = "number_of_times_each_philosopher_must_eat";
+	return (ret);
+}
+
 int	is_valid_arg(int ac, char **av)
 {
-	int res;
-	int i;
+	int	res;
+	int	i;
 
 	res = 0;
 	i = 0;
@@ -59,7 +75,9 @@ int	is_valid_arg(int ac, char **av)
 		if (res < 0)
 			return (error_msg(STR_ERR_INPUT_DIGIT, av[i], 0));
 		if (i == 1 && (res < 1 || res > MAX_PHILO))
-			return (error_msg(STR_ERR_INPUT_DIGIT, STR_MAX_PHILO, 0));
+			return (error_msg(STR_ERR_INPUT_POFLOW, STR_MAX_PHILO, 0));
+		if (i >= 2 && i <= 5 && res <= 0)
+			return (error_msg(STR_ERR_INPUT_POSITIVE, get_arg(i), 0));
 	}
 	return (1);
 }

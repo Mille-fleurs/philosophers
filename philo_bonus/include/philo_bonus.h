@@ -38,12 +38,18 @@
 not a valid unsigned integer between 0 and 2147483647.\n"
 # define STR_ERR_INPUT_POFLOW \
 	"%s invalid input: \
-there must be between 1 and %s philosophers.\n"
+number_of_philosophers must be between 1 and %s philosophers.\n"
+# define STR_ERR_INPUT_POSITIVE \
+	"%s invalid input: %s must be greater than 0.\n"
 # define STR_ERR_PTHREAD "%s error: Could not create thread.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_GETTIME "%s error: Could not get current time.\n"
 # define STR_ERR_SEM "%s error: Could not create semaphore.\n"
 # define STR_ERR_FORK "%s error: Could not fork child.\n"
+
+# define INIT_OK 1
+# define INIT_ERR_MALLOC 0
+# define INIT_ERR_SEM -1
 
 # define SEM_FORKS "/philo_global_forks"
 # define SEM_PRINT "/philo_global_print"
@@ -83,7 +89,7 @@ typedef struct s_philo
 
 typedef struct s_table
 {
-	unsigned int		philo_num;
+	int					philo_num;
 	long				start_time;
 	int					time_to_die;
 	int					time_to_eat;
@@ -119,19 +125,21 @@ void					*personal_monitor(void *data);
 void    				*meal_monitor(void *data);
 void    				*death_monitor(void *data);
 void					print_status(t_philo *philo, t_status code);
+void					set_int(sem_t *lock, int *dest, int value);
+int						get_int(sem_t *lock, int *src);
+long					set_long(sem_t *lock, long *dest, long value);
+long					get_long(sem_t *lock, long *src);
 time_t					get_current_time(void);
 void					precise_sleep(long ms);
-int    					kill_philos(t_table *t, int exit_code);
-void					*free_table(t_table *t);
-void					unlink_global_sems(void);
-int						sem_error_cleanup(t_table *t);
-int						cleanup_table(t_table *t, int exit_code);
+void    				kill_philos(t_table *t);
+void 					unlink_global_sems(void);
+void					cleanup_table(t_table *t, int sem_opened, int children_created);
 int						error_msg(char *str, char *detail, int ret);
-int						error_failure(char *s, char *details, t_table *t, int child_id);
-int 					sem_failure(t_table *t, int ret);
-void					*init_failure_exit(t_table *t);
+int						error_exit(char *s, t_table *t, int sem_opened, int children_created);
+t_table 				*init_error(char *s, t_table *t, int sem_opened, int children_created);
 int						ft_strlen(char *str);
 char					*ft_strcat(char *dest, char *src);
 char					*ft_utoa(unsigned int n);
 
 #endif
+

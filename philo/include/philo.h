@@ -22,6 +22,10 @@
 # include <sys/time.h>
 # include <unistd.h>
 
+# ifndef DEBUG
+#  define DEBUG 0
+# endif
+
 # define MAX_PHILO 250
 # define STR_MAX_PHILO "250"
 # define STR_PROG_NAME "philo:"
@@ -34,7 +38,9 @@
 not a valid unsigned integer between 0 and 2147483647.\n"
 # define STR_ERR_INPUT_POFLOW \
 	"%s invalid input: \
-there must be between 1 and %s philosophers.\n"
+number_of_philosophers must be between 1 and %s philosophers.\n"
+# define STR_ERR_INPUT_POSITIVE \
+	"%s invalid input: %s must be greater than 0.\n"
 # define STR_ERR_THREAD "%s error: Could not create thread.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_MUTEX "%s error: Could not create mutex.\n"
@@ -119,17 +125,15 @@ typedef enum s_status
 }						t_status;
 
 void					*philosopher(void *data);
-int						preparation(t_table *t);
 void					only_one_philo(t_table *t);
+void					wait_until_ready(t_table *t);
 void					end_on_error(t_table *t);
 void					print_status(t_table *t, int p_index, t_status code);
 void					*monitor(void *data);
 int						is_valid_arg(int ac, char **av);
 int						parse_arg(t_table *t, int ac, char **av);
 t_table					*init_table(int ac, char **av);
-void					handle_mutex_error(int status, t_op op);
 int						safe_mutex_handle(pthread_mutex_t *mtx, t_op code);
-void					handle_thread_error(int status, t_op op);
 int						safe_thread_handle(pthread_t *t,
 							void *(*routine)(void *), void *arg, t_op op);
 void					set_int(pthread_mutex_t *mtx, int *dest, int value);

@@ -12,9 +12,29 @@
 
 #include "philo.h"
 
-void		write_outcome(t_table *table);
+static void	write_outcome(t_table *table)
+{
+	int	i;
+	int	full_count;
 
-static int	create_mutex(t_table *t)
+	if (table->meal_num == -1)
+		return ;
+	full_count = 0;
+	i = -1;
+	while (++i < table->philo_num)
+	{
+		if (get_int(&table->philos[i].philo_mutex,
+				&table->philos[i].meals_eaten) >= table->meal_num)
+			full_count++;
+	}
+	safe_mutex_handle(&table->print_mutex, LOCK);
+	printf("%s%d/%d philosophers had at least %d meals.%s\n", RED, full_count,
+		table->philo_num, table->meal_num, NC);
+	safe_mutex_handle(&table->print_mutex, UNLOCK);
+	return ;
+}
+
+static int	create_threads(t_table *t)
 {
 	int	i;
 
@@ -42,18 +62,17 @@ static int	start_simulation(t_table *t)
 
 	t->threads_created = 0;
 	t->monitor_created = 0;
-	t->start_time = get_current_time() + (t->philo_num * 2 * 10);
+	t->start_time = get_current_time();
 	i = -1;
 	while (++i < t->philo_num)
 		set_long(&t->philos[i].philo_mutex, &t->philos[i].last_meal_time,
 				t->start_time);
-	if (!create_mutex(t))
+	if (!create_threads(t))
 	{
 		set_int(&t->table_mutex, &t->threads_ready, 1);
 		set_int(&t->end_mutex, &t->end, 1);
 		return (0);
 	}
-	printf("%s%ld ms : %d philo threads and monitor thread created %s\n", GREEN, get_current_time(), i, NC);
 	set_int(&t->table_mutex, &t->threads_ready, 1);
 	return (1);
 }
@@ -96,27 +115,8 @@ int	main(int ac, char **av)
 		ret = 1;
 	if (!stop_simulation(table))
 		ret = 1;
-	write_outcome(table);
+	if (DEBUG)
+		write_outcome(table);
 	cleanup_table(table, table->philo_num, table->philo_num);
 	return (ret);
-}
-
-void	write_outcome(t_table *table)
-{
-	int	i;
-	int	full_count;
-
-	full_count = 0;
-	i = -1;
-	while (++i < table->philo_num)
-	{
-		if (get_int(&table->philos[i].philo_mutex,
-				&table->philos[i].meals_eaten) >= table->meal_num)
-			full_count++;
-	}
-	pthread_mutex_lock(&table->print_mutex);
-	printf("%s%d/%d philosophers had at least %d meals.%s\n", RED, full_count,
-		table->philo_num, table->meal_num, NC);
-	pthread_mutex_unlock(&table->print_mutex);
-	return ;
 }

@@ -48,8 +48,5 @@ long	get_long(pthread_mutex_t *mtx, long *src)
 
 int	simulation_finished(t_table *t)
 {
-	int	ret;
-
-	ret = get_int(&t->end_mutex, &t->end);
-	return (ret);
+	return (get_int(&t->end_mutex, &t->end));
 }

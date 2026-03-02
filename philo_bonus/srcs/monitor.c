@@ -12,24 +12,24 @@
 
 #include "philo_bonus.h"
 
-static int     check_end_condition(t_table *t, t_philo *p)
+static int     check_end_condition(t_philo *p)
 {
+    long    now;
+
     sem_wait(p->sem_meal);
-    if (get_current_time() - p->last_meal_time >= t->time_to_die)
+    now = get_current_time();
+    if (now - p->last_meal_time >= p->table->time_to_die)
     {
         sem_post(p->sem_meal);
         print_status(p, DIED);
-        sem_post(t->sem_philo_dead);
-        return (1);
+        sem_post(p->table->sem_philo_dead);
+        exit(CHILD_EXIT_PHILO_DEAD);
     }
-    if (t->meal_num != -1)
+    if (p->table->meal_num != -1 && p->is_full)
     {
-        if (p->meals_eaten >= t->meal_num)
-        {
-            sem_post(p->sem_meal);
-            sem_post(t->sem_philo_full);
-            return (1);
-        }
+        sem_post(p->sem_meal);
+        sem_post(p->table->sem_philo_full);
+        exit(CHILD_EXIT_PHILO_FULL);
     }
     sem_post(p->sem_meal);
     return (0);
@@ -38,17 +38,11 @@ static int     check_end_condition(t_table *t, t_philo *p)
 void	*personal_monitor(void *data)
 {
     t_philo *p;
-    t_table *t;
 
     p = (t_philo *)data;
-    t = p->table;
-
-    if (t->meal_num == -1)
-        return (NULL);
     while (1)
     {
-        if (check_end_condition(t, p))
-            break;
+        check_end_condition(p);
         precise_sleep(1);
     }
     return (NULL);
@@ -57,17 +51,14 @@ void	*personal_monitor(void *data)
 void    *meal_monitor(void *data)
 {
     t_table *t;
-    unsigned int i;
+    int i;
 
     t = (t_table *)data;
     if (t->meal_num == -1)
         return (NULL);
-    i = 0;
-    while (i < t->philo_num)
-    {  
+    i = -1;
+    while (++i < t->philo_num)
         sem_wait(t->sem_philo_full);
-        i++;
-    }
     sem_post(t->sem_stop);
     return (NULL);
 }
@@ -81,3 +72,4 @@ void    *death_monitor(void *data)
     sem_post(t->sem_stop);
     return (NULL);
 }
+

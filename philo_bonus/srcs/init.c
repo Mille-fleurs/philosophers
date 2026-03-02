@@ -16,20 +16,20 @@ static int open_global_sems(t_table *t)
 {
 	t->sem_forks = sem_open(SEM_FORKS, O_CREAT, 0644, t->philo_num);
 	if (t->sem_forks == SEM_FAILED)
-		return (sem_failure(t, 0));
+		return (INIT_ERR_SEM);
 	t->sem_print = sem_open(SEM_PRINT, O_CREAT, 0644, 1);
 	if (t->sem_print == SEM_FAILED)
-		return (sem_failure(t, 0));
-	t->sem_philo_full = sem_open(SEM_FULL, O_CREAT, 0644, t->philo_num);
+		return (INIT_ERR_SEM);
+	t->sem_philo_full = sem_open(SEM_FULL, O_CREAT, 0644, 0);
 	if (t->sem_philo_full == SEM_FAILED)
-		return (sem_failure(t, 0));
-	t->sem_philo_dead = sem_open(SEM_DEAD, O_CREAT, 0644, t->philo_num);
+		return (INIT_ERR_SEM);
+	t->sem_philo_dead = sem_open(SEM_DEAD, O_CREAT, 0644, 0);
 	if (t->sem_philo_dead == SEM_FAILED)
-		return (sem_failure(t, 0));
-	t->sem_stop = sem_open(SEM_STOP, O_CREAT, 0644, 1);
+		return (INIT_ERR_SEM);
+	t->sem_stop = sem_open(SEM_STOP, O_CREAT, 0644, 0);
 	if (t->sem_stop == SEM_FAILED)
-		return (sem_failure(t, 0));
-	return (1);
+		return (INIT_ERR_SEM);
+	return (INIT_OK);
 }
 
 static char	*make_sem_meal_name(char *str, unsigned int id)
@@ -54,7 +54,7 @@ static int init_one_philo(t_table *t, t_philo **p, int pos)
 {
 	*p = malloc(sizeof(t_philo));
 	if (!*p)
-		return (0);
+		return (INIT_ERR_MALLOC);
 	memset(*p, 0, sizeof(t_philo));
 	(*p)->table = t;
 	(*p)->id = pos + 1;
@@ -64,50 +64,63 @@ static int init_one_philo(t_table *t, t_philo **p, int pos)
 	(*p)->sem_philo_dead = t->sem_philo_dead;
 	(*p)->sem_meal_name = make_sem_meal_name(SEM_MEAL, (*p)->id);
 	if (!(*p)->sem_meal_name)
-		return (0);
-	(*p)->sem_meal = NULL;
-	return (1);
+		return (free(*p), *p = NULL, INIT_ERR_MALLOC);
+	sem_unlink((*p)->sem_meal_name);
+	(*p)->sem_meal = sem_open((*p)->sem_meal_name, O_CREAT, 0644, 1);
+	if ((*p)->sem_meal == SEM_FAILED)
+	{
+		free((*p)->sem_meal_name);
+		free(*p);
+		*p = NULL;
+		return (INIT_ERR_SEM);
+	}
+	return (INIT_OK);
 }
 
 static int	init_philos(t_table *t)
 {
-	unsigned int	i;
+	int	i;
+	int	ret;			
 	
-	t->philos = NULL;
 	t->philos = malloc(sizeof (t_philo *) * t->philo_num);
 	if (!t->philos)
-		return (error_failure(STR_ERR_MALLOC, NULL, t, 0));
-	i = 0;
-	while (i < t->philo_num)
+		return (INIT_ERR_MALLOC);
+	i = -1;
+	while (++i < t->philo_num)
 	{
 		t->philos[i] = NULL;
-		if (!init_one_philo(t, &t->philos[i], i))
-			return (error_failure(STR_ERR_MALLOC, NULL, t, 0));
-		i++;
+		ret = init_one_philo(t, &t->philos[i], i);
+		if (ret != INIT_OK)
+			return (ret);
 	}
-	return (1);
+	return (INIT_OK);
 }
 
 t_table *init_table(int ac, char **av)
 {
 	t_table *t;
+	int		ret;
 	
 	t = malloc(sizeof(t_table));
 	if (!t)
 		return (NULL);
 	memset(t, 0, sizeof(*t));
-	t->philos = NULL;
-	t->pids = NULL;
 	if (!parse_arg(t, ac, av))
-		return (free(t), NULL);
+		return (cleanup_table(t, 0, 0), NULL);
 	unlink_global_sems();
-	if (!open_global_sems(t))
-		return (free(t), NULL);
+	ret = open_global_sems(t);
+	if (ret != INIT_OK)
+		return (init_error(STR_ERR_SEM, t, 1, 0));
 	t->pids = malloc(sizeof(pid_t) * t->philo_num);
 	if (!t->pids)
-		return (init_failure_exit(t));
+		return (init_error(STR_ERR_MALLOC, t, 1, 0));
 	memset(t->pids, 0, sizeof(pid_t) * t->philo_num);
-	if (!init_philos(t))
-		return (init_failure_exit(t));
+	ret = init_philos(t);
+	if (ret != INIT_OK)
+	{
+		if (ret == INIT_ERR_MALLOC)
+			return (init_error(STR_ERR_MALLOC, t, 1, 0));
+		return (init_error(STR_ERR_SEM, t, 1, 0));
+	}
 	return (t);
 }

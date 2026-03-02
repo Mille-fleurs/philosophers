@@ -12,9 +12,19 @@
 
 #include "philo.h"
 
+static void debug_monitor(t_table *t, char *msg, int id)
+{
+	if (!DEBUG)
+		return ;
+	pthread_mutex_lock(&t->print_mutex);
+	printf("%s[DBG] %ld %s (%d)%s\n", RED, get_current_time(), msg, id, NC);
+}
+
+
 static void	kill_philo(t_table *t, int p_id)
 {
 	set_int(&t->end_mutex, &t->end, 1);
+	debug_monitor(t, "monitor detected death", p_id);
 	print_status(t, p_id, DIED);
 }
 
@@ -25,7 +35,6 @@ static int	is_dead(t_table *t, t_philo *p)
 
 	curr = get_current_time();
 	last_meal = get_long(&p->philo_mutex, &p->last_meal_time);
-	printf("%s%ld ms : remaining ms is : %ld%s\n", PURPLE, curr, t->time_die - (curr - last_meal), NC);
 	if (curr - last_meal >= t->time_die)
 		return (1);
 	return (0);
@@ -40,7 +49,6 @@ static int	all_full(t_table *t, t_philo *p, int *full_count)
 		(*full_count)++;
 	if (*full_count == t->philo_num)
 		return (1);
-	printf("%s%ld ms : %d philos out of %d are full%s\n", PURPLE, get_current_time(), *full_count, p->id, NC);
 	return (0);
 }
 
@@ -51,6 +59,7 @@ void	*monitor(void *data)
 	t_table	*t;
 
 	t = (t_table *)data;
+	wait_until_ready(t);
 	while (!simulation_finished(t))
 	{
 		i = -1;
@@ -65,6 +74,7 @@ void	*monitor(void *data)
 			if (all_full(t, &t->philos[i], &full_count))
 			{
 				set_int(&t->end_mutex, &t->end, 1);
+				debug_monitor(t, "monitor detected all full", -1);
 				return (NULL);
 			}
 		}

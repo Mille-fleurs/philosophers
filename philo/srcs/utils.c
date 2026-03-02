@@ -36,20 +36,15 @@ void	precise_sleep(t_table *t, long ms)
 	long	start;
 
 	start = get_current_time();
+	if (start < 0)
+	{
+		usleep(ms * 1000);
+		return ;
+	}
 	while (!simulation_finished(t))
 	{
-		if ((get_current_time() - start) <= ms)
+		if (get_current_time() - start >= ms)
 			break ;
 		usleep(200);
 	}
 }
-
-// void	*safe_malloc(size_t bytes)
-// {
-// 	void	*ret;
-
-// 	ret = malloc(bytes);
-// 	if (!ret)
-// 		return (NULL);
-// 	return (ret);
-// }

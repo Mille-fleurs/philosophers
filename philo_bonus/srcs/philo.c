@@ -18,10 +18,11 @@ void    *only_one_philo(t_philo *p)
     print_status(p, GOT_FORK_1);
     precise_sleep(p->table->time_to_die);
     print_status(p, DIED);
-    return (NULL);
+    sem_post(p->table->sem_philo_dead);
+    exit(CHILD_EXIT_PHILO_DEAD);
 }
 
-static void eat_rountine(t_philo *p)
+static void eat_sleep_routine(t_philo *p)
 {
     sem_wait(p->sem_forks);
     print_status(p, GOT_FORK_1);
@@ -31,6 +32,15 @@ static void eat_rountine(t_philo *p)
     sem_wait(p->sem_meal);
     p->last_meal_time = get_current_time();
     p->meals_eaten++;
+    if (p->table->meal_num != -1 && p->is_full == 0 && p->meals_eaten >= p->table->meal_num)
+    {
+        p->is_full = 1;
+        sem_post(p->table->sem_philo_full);
+        sem_post(p->sem_meal);
+        sem_post(p->sem_forks);
+        sem_post(p->sem_forks);
+        exit(CHILD_EXIT_PHILO_FULL);
+    }
     sem_post(p->sem_meal);
     precise_sleep(p->table->time_to_eat);
     sem_post(p->sem_forks);
@@ -64,24 +74,19 @@ void    *philosopher(void *data)
     t_philo *p;
 
     p = (t_philo *)data;
+    while (get_current_time() < p->table->start_time)
+        usleep(100);
     if (p->table->philo_num == 1)
         return (only_one_philo(p));
     if (pthread_create(&p->personal_monitor, NULL, personal_monitor, p) != 0)
-    {
-        error_failure(STR_ERR_PTHREAD, NULL, p->table, p->table->philo_num);
-        return (NULL);
-    }
-    if (pthread_detach(p->personal_monitor) != 0)
-    {
-        error_failure(STR_ERR_PTHREAD, NULL, p->table, p->table->philo_num);
-        return (NULL);
-    }
+        exit(CHILD_EXIt_ERR_PTHREAD);
+    pthread_detach(p->personal_monitor);
     if (p->id % 2 ==0)
         precise_sleep(1);
     while (1)
     {
-        eat_sleep_fork(p);
+        eat_sleep_routine(p);
         think_routine(p, 0);
     }
-    return (NULL);
+    exit(EXIT_SUCCESS);
 }

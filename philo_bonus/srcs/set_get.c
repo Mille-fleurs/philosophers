@@ -17,7 +17,6 @@ void	set_int(sem_t *lock, int *dest, int value)
 	sem_wait(lock);
 	*dest = value;
 	sem_post(lock);
-	return (1);
 }
 
 int	get_int(sem_t *lock, int *src)
@@ -30,7 +29,7 @@ int	get_int(sem_t *lock, int *src)
 	return (ret);
 }
 
-int	set_long(sem_t *lock, long *dest, long value)
+long	set_long(sem_t *lock, long *dest, long value)
 {
 	sem_wait(lock);
 	*dest = value;

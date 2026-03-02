@@ -20,7 +20,7 @@ SRCS    	= srcs/main.c \
 OBJS    = $(SRCS:.c=.o)
 
 ifeq ($(DEBUG),1)
-    CFLAGS += -g3 -O0 -fno-omit-frame-pointer
+    CFLAGS += -g3 -O0 -fno-omit-frame-pointer -DDEBUG=1
 endif
 
 ifeq ($(ASAN),1)
@@ -37,7 +37,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 %.o: %.c 
-	$(CC) $(CFLAGS) -pthread -I$(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(INCLUDE) -c $< -o $@
 	
 debug:
 	$(MAKE) DEBUG=1 re
@@ -56,4 +56,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re debug tsan asan

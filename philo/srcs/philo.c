@@ -12,44 +12,53 @@
 
 #include "philo.h"
 
+static void debug_philo(t_philo *p, const char *msg)
+{
+	if (!DEBUG)
+		return ;
+	safe_mutex_handle(&p->table->print_mutex, LOCK);
+	printf("%s[DBG] %ld ms | philo %d | %s%s\n", PURPLE, get_current_time() - p->table->start_time, p->id, msg, NC);
+	safe_mutex_handle(&p->table->print_mutex, UNLOCK);
+}
+
 static void	eat_routine(t_philo *p)
 {
 	int	meals;
 
-	if (simulation_finished(p->table))
-	{
-		safe_mutex_handle(&p->second_f->mutex, UNLOCK);
-		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
-	}
 	set_long(&p->philo_mutex, &p->last_meal_time, get_current_time());
+	debug_philo(p, "start_eating");
 	if (!simulation_finished(p->table))
 		print_status(p->table, p->id, EATING);
 	precise_sleep(p->table, p->table->time_eat);
 	meals = get_int(&p->philo_mutex, &p->meals_eaten);
 	set_int(&p->philo_mutex, &p->meals_eaten, meals + 1);
+	debug_philo(p, "finished eating");
 	if (p->table->meal_num >= 0 && meals + 1 >= p->table->meal_num)
 		set_int(&p->philo_mutex, &p->is_full, 1);
 	safe_mutex_handle(&p->second_f->mutex, UNLOCK);
 	safe_mutex_handle(&p->first_f->mutex, UNLOCK);
 }
 
-static void	take_fork(t_philo *p)
+static int	take_fork(t_philo *p)
 {
 	safe_mutex_handle(&p->first_f->mutex, LOCK);
 	if (simulation_finished(p->table))
 	{
 		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
-		return ;
+		return (0);
 	}
+	debug_philo(p, "locked first fork");
 	print_status(p->table, p->id, GOT_FORK_1);
 	safe_mutex_handle(&p->second_f->mutex, LOCK);
 	if (simulation_finished(p->table))
 	{
 		safe_mutex_handle(&p->second_f->mutex, UNLOCK);
 		safe_mutex_handle(&p->first_f->mutex, UNLOCK);
-		return ;
+		return (0);
 	}
+	debug_philo(p, "locked second fork");
 	print_status(p->table, p->id, GOT_FORK_2);
+	return (1);
 }
 
 static void	think_routine(t_philo *p, int silent)
@@ -68,6 +77,7 @@ static void	think_routine(t_philo *p, int silent)
 		time_to_think = 200;
 	if (!simulation_finished(p->table) && silent == 0)
 		print_status(p->table, p->id, THINKING);
+	debug_philo(p, "start_thinking");
 	precise_sleep(p->table, time_to_think);
 }
 
@@ -76,20 +86,21 @@ void	*philosopher(void *data)
 	t_philo	*p;
 
 	p = (t_philo *)data;
-	if (!preparation(p->table))
-		return (NULL);
+	wait_until_ready(p->table);
 	if (p->table->philo_num == 1)
-	{
-		only_one_philo(p->table);
-		return (NULL);
-	}
+		return (only_one_philo(p->table), NULL);
+	debug_philo(p, "loop start");
 	while (!simulation_finished(p->table))
 	{
-		take_fork(p);
-		printf("%s%ld ms : philo[%d] taken two forks%s\n", CYAN, get_current_time(), p->id, NC);
-		if (!simulation_finished(p->table))
-			eat_routine(p);
-		printf("%s%ld ms : philo[%d] finish to eat%s\n", CYAN, get_current_time(), p->id, NC);
+		if (!take_fork(p))
+			continue ;
+		if (simulation_finished(p->table))
+		{
+			safe_mutex_handle(&p->second_f->mutex, UNLOCK);
+			safe_mutex_handle(&p->first_f->mutex, UNLOCK);
+			break ;
+		}
+		eat_routine(p);
 		if (!simulation_finished(p->table))
 			print_status(p->table, p->id, SLEEPING);
 		precise_sleep(p->table, p->table->time_sleep);

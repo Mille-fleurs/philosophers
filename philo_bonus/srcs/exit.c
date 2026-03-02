@@ -21,31 +21,35 @@ int	error_msg(char *str, char *detail, int ret)
 	return (ret);
 }
 
-int	error_failure(char *s, char *details, t_table *t, int child_id)
+int	error_exit(char *s, t_table *t, int sem_opened, int children_created)
 {
-	if (t && child_id > 0)
-		kill_philos(t, EXIT_FAILURE);
-	if (t)
-		free_table(t);
-	return (error_msg(s, details, 0));
+	cleanup_table(t, sem_opened, children_created);
+	return (error_msg(s, NULL, 0));
 }
 
-int sem_failure(t_table *t, int ret)
+t_table *init_error(char *s, t_table *t, int sem_opened, int children_created)
 {
-	sem_error_cleanup(t);
-	printf(STR_ERR_SEM, STR_PROG_NAME);
-	return (ret);
-}
-
-void	*init_failure_exit(t_table *t)
-{
-	if (t->pids)
-	{
-		free(t->pids);
-		t->pids = NULL;
-	}
-	sem_error_cleanup(t);
-	free(t);
+	cleanup_table(t, sem_opened, children_created);
+	error_msg(s, NULL, 0);
 	return (NULL);
 }
+
+// int sem_failure(t_table *t, int ret)
+// {
+// 	sem_error_cleanup(t);
+// 	printf(STR_ERR_SEM, STR_PROG_NAME);
+// 	return (ret);
+// }
+
+// void	*init_failure_exit(t_table *t)
+// {
+// 	if (t->pids)
+// 	{
+// 		free(t->pids);
+// 		t->pids = NULL;
+// 	}
+// 	sem_error_cleanup(t);
+// 	free(t);
+// 	return (NULL);
+// }
 

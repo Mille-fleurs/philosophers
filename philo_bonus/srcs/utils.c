@@ -57,10 +57,9 @@ char	*ft_utoa(unsigned int n)
 	if (!res)
 		return (NULL);
 	res[len] = '\0';
-	len--;
-	while (n % 10)
+	while (len--)
 	{
-		res[len--] = n % 10 + '0';
+		res[len] = (n % 10) + '0';
 		n /= 10;
 	}
 	return (res);

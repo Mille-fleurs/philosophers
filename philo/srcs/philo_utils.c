@@ -25,7 +25,7 @@ void	only_one_philo(t_table *t)
 	set_int(&t->end_mutex, &t->end, 1);
 }
 
-static void	wait_until_ready(t_table *t)
+void	wait_until_ready(t_table *t)
 {
 	int	ready;
 
@@ -37,13 +37,4 @@ static void	wait_until_ready(t_table *t)
 			break ;
 		precise_sleep(t, 1);
 	}
-}
-
-int	preparation(t_table *t)
-{
-	wait_until_ready(t);
-	while (!simulation_finished(t) && get_current_time() < t->start_time)
-		precise_sleep(t, 1);
-	printf("%s%ld ms : All Philosopher ready%s\n", RED, get_current_time(), NC);
-	return (1);
 }

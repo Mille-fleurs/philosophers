@@ -73,7 +73,6 @@ static int	init_philo(t_table *t, int *philos_inited)
 		t->philos[i].table = t;
 		t->philos[i].last_meal_time = 0;
 		assign_forks(&t->philos[i], t->forks, i);
-		printf("%sPhilo[%d], first_f:%d, second_f:%d%s\n", RED, i + 1, t->philos[i].first_f->id, t->philos[i].second_f->id, NC);
 	}
 	*philos_inited = t->philo_num;
 	return (1);
@@ -85,20 +84,10 @@ static int	init_table_mutexes(t_table *t)
 		return (0);
 	t->table_inited = 1;
 	if (!safe_mutex_handle(&t->end_mutex, INIT))
-	{
-		if (t->table_inited)
-			safe_mutex_handle(&t->table_mutex, DESTROY);
 		return (0);
-	}
 	t->end_inited = 1;
 	if (!safe_mutex_handle(&t->print_mutex, INIT))
-	{
-		if (t->end_inited)
-			safe_mutex_handle(&t->end_mutex, DESTROY);
-		if (t->table_inited)
-			safe_mutex_handle(&t->table_mutex, DESTROY);
 		return (0);
-	}
 	t->print_inited = 1;
 	return (1);
 }

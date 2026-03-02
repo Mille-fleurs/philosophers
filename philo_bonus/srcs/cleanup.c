@@ -12,44 +12,44 @@
 
 #include "philo_bonus.h"
 
-int    kill_philos(t_table *t, int exit_code)
+void    kill_philos(t_table *t)
 {
-    unsigned int    i;
+    int i;
 
-    i = 0;
-    while (i < t->philo_num)
-    {
-        kill(t->pids[i], SIGKILL);
-        i++;
+    i = -1;
+    while (++i < t->philo_num)
+    {   
+        if (t->pids && t->pids[i] > 0)
+            kill(t->pids[i], SIGKILL);
     }
-    return (exit_code);
 }
 
-void *free_table(t_table *t)
+static void free_table(t_table *t)
 {
-    unsigned int i;
+    int i;
 
     if (!t)
-        return (NULL);
-    if (t->philos != NULL)
+        return ;
+    if (t->philos)
     {
-        i = 0;
-        while (i < t->philo_num)
+        i = -1;
+        while (++i < t->philo_num)
         {
-            if (t->philos[i] != NULL)
+            if (!t->philos[i])
+                continue;
+            if (t->philos[i]->sem_meal && t->philos[i]->sem_meal != SEM_FAILED)
+                sem_close(t->philos[i]->sem_meal);
+            if (t->philos[i]->sem_meal_name)
             {
-                if (t->philos[i]->sem_meal_name)
-                    free(t->philos[i]->sem_meal_name);
-                free(t->philos[i]);
+                sem_unlink(t->philos[i]->sem_meal_name);
+                free(t->philos[i]->sem_meal_name);
             }
-            i++;
+            free(t->philos[i]);
         }
         free(t->philos);
     }
-    if (t->pids)
-        free(t->pids);
+    free(t->pids);
     free(t);
-    return (NULL);
 }
 
 void 	unlink_global_sems(void)
@@ -61,34 +61,28 @@ void 	unlink_global_sems(void)
 	sem_unlink(SEM_STOP);
 }
 
-int     sem_error_cleanup(t_table *t)
+static void     sem_error_cleanup(t_table *t)
 {
-    if (t->sem_forks)
+    if (t->sem_forks && t->sem_forks != SEM_FAILED)
         sem_close(t->sem_forks);
-    if (t->sem_print)
+    if (t->sem_print && t->sem_print != SEM_FAILED)
 	    sem_close(t->sem_print);
-    if (t->sem_philo_full)
+    if (t->sem_philo_full && t->sem_philo_full != SEM_FAILED)
 	    sem_close(t->sem_philo_full);
-    if (t->sem_philo_dead)
+    if (t->sem_philo_dead && t->sem_philo_dead != SEM_FAILED)
 	    sem_close(t->sem_philo_dead);
-    if (t->sem_stop)
+    if (t->sem_stop && t->sem_stop != SEM_FAILED)
 	    sem_close(t->sem_stop);
 	unlink_global_sems();
-    return (0);
 }
 
-int 	cleanup_table(t_table *t, int exit_code)
+void 	cleanup_table(t_table *t, int sem_opened, int children_created)
 {
 	if (!t)
-		return (exit_code);
-	pthread_join(t->meal_monitor, NULL);
-	pthread_join(t->death_monitor, NULL);
-	sem_close(t->sem_forks);
-	sem_close(t->sem_print);
-	sem_close(t->sem_philo_full);
-	sem_close(t->sem_philo_dead);
-	sem_close(t->sem_stop);
-	unlink_global_sems();
-	free_table(t);
-    return (exit_code);
+        return ;
+    if (children_created)
+        kill_philos(t);
+    if (sem_opened)
+        sem_error_cleanup(t);
+    free_table(t);
 }
