@@ -6,20 +6,11 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:45:24 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/27 21:08:40 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:02:01 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static void debug_philo(t_philo *p, const char *msg)
-{
-	if (!DEBUG)
-		return ;
-	safe_mutex_handle(&p->table->print_mutex, LOCK);
-	printf("%s[DBG] %ld ms | philo %d | %s%s\n", PURPLE, get_current_time() - p->table->start_time, p->id, msg, NC);
-	safe_mutex_handle(&p->table->print_mutex, UNLOCK);
-}
 
 static void	eat_routine(t_philo *p)
 {

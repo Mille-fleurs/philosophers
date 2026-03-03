@@ -6,20 +6,11 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/15 20:41:35 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/27 21:08:37 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:11:14 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static void debug_monitor(t_table *t, char *msg, int id)
-{
-	if (!DEBUG)
-		return ;
-	pthread_mutex_lock(&t->print_mutex);
-	printf("%s[DBG] %ld %s (%d)%s\n", RED, get_current_time(), msg, id, NC);
-}
-
 
 static void	kill_philo(t_table *t, int p_id)
 {
@@ -52,6 +43,22 @@ static int	all_full(t_table *t, t_philo *p, int *full_count)
 	return (0);
 }
 
+static int	end_condition(t_table *t, int pos, int *full_count)
+{
+	if (is_dead(t, &t->philos[pos]))
+	{
+		kill_philo(t, pos + 1);
+		return (1);
+	}
+	if (all_full(t, &t->philos[pos], full_count))
+	{
+		set_int(&t->end_mutex, &t->end, 1);
+		debug_monitor(t, "monitor detected all full", -1);
+		return (1);
+	}
+	return (0);
+}
+
 void	*monitor(void *data)
 {
 	int		i;
@@ -66,17 +73,8 @@ void	*monitor(void *data)
 		full_count = 0;
 		while (++i < t->philo_num)
 		{
-			if (is_dead(t, &t->philos[i]))
-			{
-				kill_philo(t, i + 1);
+			if (end_condition(t, i, &full_count))
 				return (NULL);
-			}
-			if (all_full(t, &t->philos[i], &full_count))
-			{
-				set_int(&t->end_mutex, &t->end, 1);
-				debug_monitor(t, "monitor detected all full", -1);
-				return (NULL);
-			}
 		}
 		precise_sleep(t, 1);
 	}

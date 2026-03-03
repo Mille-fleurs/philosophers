@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:41 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/26 18:14:54 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:08:38 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,28 +29,24 @@
 # define MAX_PHILO 250
 # define STR_MAX_PHILO "250"
 # define STR_PROG_NAME "philo:"
-# define STR_USAGE \
-	"%s usage: ./philo <number_of_philosophers> \
+# define STR_USAGE "%s usage: ./philo <number_of_philosophers> \
 <time_to_die> <time_to_eat> <time_to_sleep> \
 [number_of_times_each_philosopher_must_eat]\n"
-# define STR_ERR_INPUT_DIGIT \
-	"%s invalid input: %s: \
+# define STR_ERR_INPUT_DIGIT "%s invalid input: %s: \
 not a valid unsigned integer between 0 and 2147483647.\n"
-# define STR_ERR_INPUT_POFLOW \
-	"%s invalid input: \
+# define STR_ERR_INPUT_POFLOW "%s invalid input: \
 number_of_philosophers must be between 1 and %s philosophers.\n"
-# define STR_ERR_INPUT_POSITIVE \
-	"%s invalid input: %s must be greater than 0.\n"
+# define STR_ERR_INPUT_POSITIVE "%s invalid input: %s must be greater than 0.\n"
 # define STR_ERR_THREAD "%s error: Could not create thread.\n"
 # define STR_ERR_MALLOC "%s error: Could not allocate memory.\n"
 # define STR_ERR_MUTEX "%s error: Could not create mutex.\n"
 # define STR_ERR_GETTIME "%s error: Could not get current time.\n"
 
-# define NC		"\e[0m"
-# define RED	"\e[31m"
-# define GREEN	"\e[32m"
-# define PURPLE	"\e[35m"
-# define CYAN	"\e[36m"
+# define NC "\e[0m"
+# define RED "\e[31m"
+# define GREEN "\e[32m"
+# define PURPLE "\e[35m"
+# define CYAN "\e[36m"
 
 typedef struct s_table	t_table;
 
@@ -129,6 +125,9 @@ void					only_one_philo(t_table *t);
 void					wait_until_ready(t_table *t);
 void					end_on_error(t_table *t);
 void					print_status(t_table *t, int p_index, t_status code);
+void					write_outcome(t_table *table);
+void					debug_monitor(t_table *t, char *msg, int id);
+void					debug_philo(t_philo *p, const char *msg);
 void					*monitor(void *data);
 int						is_valid_arg(int ac, char **av);
 int						parse_arg(t_table *t, int ac, char **av);

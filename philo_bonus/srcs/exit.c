@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:47:10 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:37:54 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:14:12 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ int	error_exit(char *s, t_table *t, int sem_opened, int children_created)
 	return (error_msg(s, NULL, 0));
 }
 
-t_table *init_error(char *s, t_table *t, int sem_opened, int children_created)
+t_table	*init_error(char *s, t_table *t, int sem_opened, int children_created)
 {
 	cleanup_table(t, sem_opened, children_created);
 	error_msg(s, NULL, 0);
@@ -52,4 +52,3 @@ t_table *init_error(char *s, t_table *t, int sem_opened, int children_created)
 // 	free(t);
 // 	return (NULL);
 // }
-

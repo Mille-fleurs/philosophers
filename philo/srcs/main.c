@@ -6,33 +6,11 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/28 08:51:46 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/27 11:05:47 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:01:09 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-static void	write_outcome(t_table *table)
-{
-	int	i;
-	int	full_count;
-
-	if (table->meal_num == -1)
-		return ;
-	full_count = 0;
-	i = -1;
-	while (++i < table->philo_num)
-	{
-		if (get_int(&table->philos[i].philo_mutex,
-				&table->philos[i].meals_eaten) >= table->meal_num)
-			full_count++;
-	}
-	safe_mutex_handle(&table->print_mutex, LOCK);
-	printf("%s%d/%d philosophers had at least %d meals.%s\n", RED, full_count,
-		table->philo_num, table->meal_num, NC);
-	safe_mutex_handle(&table->print_mutex, UNLOCK);
-	return ;
-}
 
 static int	create_threads(t_table *t)
 {
@@ -46,7 +24,6 @@ static int	create_threads(t_table *t)
 			return (0);
 		t->threads_created++;
 	}
-	
 	if (t->philo_num > 1)
 	{
 		if (!safe_thread_handle(&t->monitor, monitor, t, CREATE))
@@ -66,7 +43,7 @@ static int	start_simulation(t_table *t)
 	i = -1;
 	while (++i < t->philo_num)
 		set_long(&t->philos[i].philo_mutex, &t->philos[i].last_meal_time,
-				t->start_time);
+			t->start_time);
 	if (!create_threads(t))
 	{
 		set_int(&t->table_mutex, &t->threads_ready, 1);

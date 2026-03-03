@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:43:30 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:36:47 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:11:11 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_strlen(char *str)
 {
-	int len;
+	int	len;
 
 	len = 0;
 	while (str[len])
@@ -42,9 +42,9 @@ char	*ft_strcat(char *dest, char *src)
 
 char	*ft_utoa(unsigned int n)
 {
-	char *res;
-	size_t		len;
-	unsigned int temp;
+	char			*res;
+	size_t			len;
+	unsigned int	temp;
 
 	temp = n;
 	len = (n == 0);
@@ -67,7 +67,7 @@ char	*ft_utoa(unsigned int n)
 
 void	unblock_monitor_threads(t_table *t)
 {
-	int i;
+	int	i;
 
 	sem_post(t->sem_philo_dead);
 	i = -1;

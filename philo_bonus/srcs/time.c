@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:41:50 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:37:04 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 13:53:04 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,4 +29,3 @@ void	precise_sleep(long ms)
 	while ((get_current_time() - start) < ms)
 		usleep(200);
 }
-

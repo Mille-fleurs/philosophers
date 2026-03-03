@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:47:55 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/27 11:05:57 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:14:42 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	print_status(t_philo *philo, t_status code)
 {
-    long time;
+	long	time;
 
 	sem_wait(philo->sem_print);
 	time = get_current_time() - philo->table->start_time;

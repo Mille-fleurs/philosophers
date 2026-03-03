@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   debug.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/03/03 13:22:33 by chitoupa          #+#    #+#             */
+/*   Updated: 2026/03/03 14:14:04 by chitoupa         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo_bonus.h"
 
 void	debug_parent(t_table *t, const char *msg, int pid)
@@ -10,8 +22,7 @@ void	debug_parent(t_table *t, const char *msg, int pid)
 	time = get_current_time() - t->start_time;
 	if (time < 0)
 		time = 0;
-	printf("%s[DBG PARENT] %ld ms | %s | pid=%d%s\n",
-		CYAN, time, msg, pid, NC);
+	printf("%s[DBG PARENT] %ld ms | %s | pid=%d%s\n", CYAN, time, msg, pid, NC);
 	sem_post(t->sem_print);
 }
 
@@ -25,8 +36,8 @@ void	debug_monitor(t_table *t, const char *msg, int pid)
 	time = get_current_time() - t->start_time;
 	if (time < 0)
 		time = 0;
-	printf("%s[DBG MONITOR] %ld ms | %s | pid=%d%s\n",
-		GREEN, time, msg, pid, NC);
+	printf("%s[DBG MONITOR] %ld ms | %s | pid=%d%s\n", GREEN, time, msg, pid,
+		NC);
 	sem_post(t->sem_print);
 }
 
@@ -40,8 +51,7 @@ void	debug_philo(t_philo *p, const char *msg)
 	time = get_current_time() - p->table->start_time;
 	if (time < 0)
 		time = 0;
-	printf("%s[DBG PHILO %d] %ld ms | %s%s\n",
-		PURPLE, p->id, time, msg, NC);
+	printf("%s[DBG PHILO %d] %ld ms | %s%s\n", PURPLE, p->id, time, msg, NC);
 	sem_post(p->sem_print);
 }
 
@@ -55,8 +65,8 @@ void	debug_exit_philo(t_philo *p)
 	time = get_current_time() - p->table->start_time;
 	if (time < 0)
 		time = 0;
-	printf("%s[DBG EXIT PHILO %d] %ld ms | exit_code=%d%s\n",
-		RED, p->id, time, p->exit_code, NC);
+	printf("%s[DBG EXIT PHILO %d] %ld ms | exit_code=%d%s\n", RED, p->id, time,
+		p->exit_code, NC);
 	sem_post(p->sem_print);
 }
 
@@ -71,10 +81,10 @@ void	debug_exit_parent(t_table *t, int pid, int status)
 	if (time < 0)
 		time = 0;
 	if (WIFEXITED(status))
-		printf("%s[DBG EXIT CHILD] %ld ms | pid=%d exit=%d%s\n",
-			RED, time, pid, WEXITSTATUS(status), NC);
+		printf("%s[DBG EXIT CHILD] %ld ms | pid=%d exit=%d%s\n", RED, time, pid,
+			WEXITSTATUS(status), NC);
 	else if (WIFSIGNALED(status))
-		printf("%s[DBG EXIT CHILD] %ld ms | pid=%d signal=%d%s\n",
-			RED, time, pid, WTERMSIG(status), NC);
+		printf("%s[DBG EXIT CHILD] %ld ms | pid=%d signal=%d%s\n", RED, time,
+			pid, WTERMSIG(status), NC);
 	sem_post(t->sem_print);
 }

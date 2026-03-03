@@ -6,7 +6,7 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:48:05 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/21 23:37:21 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:14:50 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ static int	ft_atoi(const char *str)
 	return ((int)res);
 }
 
-static char *get_arg(int pos)
+static char	*get_arg(int pos)
 {
-	char *ret;
+	char	*ret;
 
 	ret = NULL;
 	if (pos == 2)

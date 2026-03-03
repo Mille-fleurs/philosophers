@@ -6,13 +6,13 @@
 /*   By: chitoupa <chitoupa@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 21:47:22 by chitoupa          #+#    #+#             */
-/*   Updated: 2026/02/24 20:39:48 by chitoupa         ###   ########.fr       */
+/*   Updated: 2026/03/03 14:14:19 by chitoupa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo_bonus.h"
 
-static int open_global_sems(t_table *t)
+static int	open_global_sems(t_table *t)
 {
 	t->sem_forks = sem_open(SEM_FORKS, O_CREAT, 0644, t->philo_num);
 	if (t->sem_forks == SEM_FAILED)
@@ -37,8 +37,8 @@ static int open_global_sems(t_table *t)
 
 static char	*make_sem_meal_name(char *str, unsigned int id)
 {
-	char *sem_name;
-	char *dup_id;
+	char	*sem_name;
+	char	*dup_id;
 
 	dup_id = ft_utoa(id);
 	if (!dup_id)
@@ -53,7 +53,7 @@ static char	*make_sem_meal_name(char *str, unsigned int id)
 	return (sem_name);
 }
 
-static int init_one_philo(t_table *t, t_philo **p, int pos)
+static int	init_one_philo(t_table *t, t_philo **p, int pos)
 {
 	*p = malloc(sizeof(t_philo));
 	if (!*p)
@@ -84,9 +84,9 @@ static int init_one_philo(t_table *t, t_philo **p, int pos)
 static int	init_philos(t_table *t)
 {
 	int	i;
-	int	ret;			
-	
-	t->philos = malloc(sizeof (t_philo *) * t->philo_num);
+	int	ret;
+
+	t->philos = malloc(sizeof(t_philo *) * t->philo_num);
 	if (!t->philos)
 		return (INIT_ERR_MALLOC);
 	i = -1;
@@ -100,11 +100,11 @@ static int	init_philos(t_table *t)
 	return (INIT_OK);
 }
 
-t_table *init_table(int ac, char **av)
+t_table	*init_table(int ac, char **av)
 {
-	t_table *t;
+	t_table	*t;
 	int		ret;
-	
+
 	t = malloc(sizeof(t_table));
 	if (!t)
 		return (NULL);
