@@ -213,7 +213,4 @@ philo_bonus/
 
 ---
 
-## Author
-
-ctoupa
-
+Made by chitoupa: chitoupa@student.42.fr | LinkedIn: Chikako Ishihara | Website: https://jardinsecretdelily.fr/
