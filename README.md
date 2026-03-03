@@ -1,5 +1,4 @@
 
-
 # Philosophers
 
 *This project has been created as part of the 42 curriculum by chitoupa*
@@ -8,8 +7,8 @@
 
 ## Description
 
-The **Philosophers** project is an introduction to concurrent programming. It is based on Edsger Dijkstra’s classic Dining Philosophers problem.
-
+The **Philosophers** project is an introduction to concurrent programming. 
+It is based on Edsger Dijkstra’s classic Dining Philosophers problem.
 The objective is to simulate philosophers sitting at a round table who alternate between:
 
 * Eating
@@ -39,9 +38,8 @@ The simulation stops when:
 
 Both programs take the following arguments:
 
-```
-./philo number_of_philosophers time_to_die time_to_eat time_to_sleep [number_of_times_each_philosopher_must_eat]
-```
+./philo <number_of_philosophers> <time_to_die> <time_to_eat> <time_to_sleep [number_of_times_each_philosopher_must_eat]
+
 
 * `number_of_philosophers` — Number of philosophers and forks
 * `time_to_die` — Time in ms before a philosopher dies without eating
@@ -114,8 +112,6 @@ When a stop condition occurs:
 
 ---
 
-## Compilation
-
 ### Mandatory
 
 ```
@@ -169,7 +165,6 @@ AI tools were used for:
 * Clarifying concurrency concepts
 * Reviewing synchronization logic
 * Improving structure and readability of documentation
-* Debugging race condition scenarios
 
 All implementation decisions and final code structure were written and validated manually.
 
@@ -179,20 +174,41 @@ All implementation decisions and final code structure were written and validated
 
 ```
 philo/
-    main.c
-    init.c
-    routine.c
-    monitor.c
-    parsing.c
-    utils.c
+    include/
+        philo.h
+    srcs/
+        main.c
+        init.c
+        output.c
+        monitor.c
+        parsing.c
+        philo.c
+        philo_utils.c
+        safe_handle.c
+        set_get.c
+        utils.c
+        error.c
+    Makefile
 
 philo_bonus/
-    main.c
-    init.c
-    philosopher.c
-    monitor.c
-    parsing.c
-    cleanup.c
+    include/
+        philo_bonus.h
+    srcs/
+        main.c
+        init.c
+        monitor.c
+        output.c
+        parsing.c
+        cleanup.c
+        exit.c
+        debug.c
+        philo.c
+        philo_utils.c
+        set_get.c
+        time.c
+        utils.c
+    Makefile
+
 ```
 
 ---
