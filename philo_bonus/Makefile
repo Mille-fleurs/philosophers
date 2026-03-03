@@ -1,7 +1,7 @@
 NAME         = philo_bonus
 
 CC          = cc 
-CFLAGS      = -Wall -Wextra -Werror
+CFLAGS      = -Wall -Wextra -Werror -pthread
 DEBUG_FLAGS = -g3 -O0 -fsanitize=address,undefined
 RM          = rm -rf
 
@@ -16,7 +16,9 @@ SRCS    	= srcs/main.c \
 			  srcs/cleanup.c \
 			  srcs/exit.c \
 			  srcs/time.c \
-			  srcs/utils.c
+			  srcs/philo_utils.c \
+			  srcs/utils.c \
+			  srcs/debug.c
 
 OBJS    	= $(SRCS:.c=.o)
 
@@ -38,7 +40,7 @@ $(NAME): $(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 %.o: %.c 
-	$(CC) $(CFLAGS) -pthread -I$(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) -I$(INCLUDE) -c $< -o $@
 
 debug:
 	$(MAKE) DEBUG=1 re

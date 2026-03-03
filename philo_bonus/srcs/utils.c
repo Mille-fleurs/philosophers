@@ -64,3 +64,20 @@ char	*ft_utoa(unsigned int n)
 	}
 	return (res);
 }
+
+void	unblock_monitor_threads(t_table *t)
+{
+	int i;
+
+	sem_post(t->sem_philo_dead);
+	i = -1;
+	while (++i < t->philo_num)
+		sem_post(t->sem_philo_full);
+}
+
+void	join_monitor_threads(t_table *t)
+{
+	if (t->meal_num != -1)
+		pthread_join(t->meal_monitor, NULL);
+	pthread_join(t->death_monitor, NULL);
+}

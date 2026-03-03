@@ -26,6 +26,10 @@
 # include <sys/wait.h>
 # include <unistd.h>
 
+# ifndef DEBUG
+#  define DEBUG 0
+# endif
+
 # define MAX_PHILO 250
 # define STR_MAX_PHILO "250"
 # define STR_PROG_NAME "philo:"
@@ -56,6 +60,7 @@ number_of_philosophers must be between 1 and %s philosophers.\n"
 # define SEM_FULL "/philo_global_full"
 # define SEM_DEAD "/philo_global_dead"
 # define SEM_STOP "/philo_global_stop"
+# define SEM_DEATH_LOCK "/philo_death_lock"
 # define SEM_MEAL "/philo_local_meal_"
 
 # define CHILD_EXIt_ERR_PTHREAD 40
@@ -78,11 +83,15 @@ typedef struct s_philo
 	sem_t				*sem_print;
 	sem_t				*sem_philo_full;
 	sem_t				*sem_philo_dead;
+	sem_t				*sem_death_lock;
 	sem_t				*sem_meal;
 	char				*sem_meal_name;
 	unsigned int		id;
 	int					meals_eaten;
 	int					is_full;
+	int					stop;
+	int					exit_code;
+	int					forks_held;
 	long				last_meal_time;
 	t_table				*table;
 }						t_philo;
@@ -100,6 +109,7 @@ typedef struct s_table
 	sem_t				*sem_stop;
 	sem_t				*sem_philo_full;
 	sem_t				*sem_philo_dead;
+	sem_t				*sem_death_lock;
 	int					sim_stop;
 	pid_t				*pids;
 	pthread_t			meal_monitor;
@@ -125,13 +135,25 @@ void					*personal_monitor(void *data);
 void    				*meal_monitor(void *data);
 void    				*death_monitor(void *data);
 void					print_status(t_philo *philo, t_status code);
+void					debug_parent(t_table *t, const char *msg, int pid);
+void					debug_monitor(t_table *t, const char *msg, int pid);
+void					debug_philo(t_philo *p, const char *msg);
+void					debug_exit_philo(t_philo *p);
+void					debug_exit_parent(t_table *t, int pid, int status);
+void    				set_stop(t_philo *p, int code);
+int     				get_stop(t_philo *p);
+int     				take_forks(t_philo *p);
+void    				drop_forks(t_philo *p);
+void 					start_monitor(t_philo *p);
+void					unblock_monitor_threads(t_table *t);
+void					join_monitor_threads(t_table *t);
 void					set_int(sem_t *lock, int *dest, int value);
 int						get_int(sem_t *lock, int *src);
 long					set_long(sem_t *lock, long *dest, long value);
 long					get_long(sem_t *lock, long *src);
 time_t					get_current_time(void);
 void					precise_sleep(long ms);
-void    				kill_philos(t_table *t);
+void    				kill_and_wait_children(t_table *t);
 void 					unlink_global_sems(void);
 void					cleanup_table(t_table *t, int sem_opened, int children_created);
 int						error_msg(char *str, char *detail, int ret);

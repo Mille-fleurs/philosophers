@@ -12,15 +12,24 @@
 
 #include "philo_bonus.h"
 
-void    kill_philos(t_table *t)
+void    kill_and_wait_children(t_table *t)
 {
     int i;
+    int status;
 
+    if (!t || !t->pids)
+        return ;
     i = -1;
     while (++i < t->philo_num)
     {   
-        if (t->pids && t->pids[i] > 0)
+        if (t->pids[i] > 0)
             kill(t->pids[i], SIGKILL);
+    }
+    i = -1;
+    while (++i < t->philo_num)
+    {
+        if (t->pids[i] > 0)
+            waitpid(t->pids[i], &status, 0);
     }
 }
 
@@ -59,6 +68,7 @@ void 	unlink_global_sems(void)
 	sem_unlink(SEM_FULL);
 	sem_unlink(SEM_DEAD);
 	sem_unlink(SEM_STOP);
+    sem_unlink(SEM_DEATH_LOCK);
 }
 
 static void     sem_error_cleanup(t_table *t)
@@ -73,6 +83,8 @@ static void     sem_error_cleanup(t_table *t)
 	    sem_close(t->sem_philo_dead);
     if (t->sem_stop && t->sem_stop != SEM_FAILED)
 	    sem_close(t->sem_stop);
+    if (t->sem_death_lock && t->sem_death_lock != SEM_FAILED)
+	    sem_close(t->sem_death_lock);
 	unlink_global_sems();
 }
 
@@ -81,8 +93,9 @@ void 	cleanup_table(t_table *t, int sem_opened, int children_created)
 	if (!t)
         return ;
     if (children_created)
-        kill_philos(t);
+        kill_and_wait_children(t);
     if (sem_opened)
         sem_error_cleanup(t);
     free_table(t);
 }
+

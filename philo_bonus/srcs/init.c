@@ -29,6 +29,9 @@ static int open_global_sems(t_table *t)
 	t->sem_stop = sem_open(SEM_STOP, O_CREAT, 0644, 0);
 	if (t->sem_stop == SEM_FAILED)
 		return (INIT_ERR_SEM);
+	t->sem_death_lock = sem_open(SEM_DEATH_LOCK, O_CREAT, 0644, 1);
+	if (t->sem_death_lock == SEM_FAILED)
+		return (INIT_ERR_SEM);
 	return (INIT_OK);
 }
 
@@ -42,7 +45,7 @@ static char	*make_sem_meal_name(char *str, unsigned int id)
 		return (NULL);
 	sem_name = malloc(ft_strlen(str) + ft_strlen(dup_id) + 1);
 	if (!sem_name)
-		return (NULL);
+		return (free(dup_id), NULL);
 	sem_name[0] = '\0';
 	sem_name = ft_strcat(sem_name, str);
 	sem_name = ft_strcat(sem_name, dup_id);
@@ -62,6 +65,7 @@ static int init_one_philo(t_table *t, t_philo **p, int pos)
 	(*p)->sem_print = t->sem_print;
 	(*p)->sem_philo_full = t->sem_philo_full;
 	(*p)->sem_philo_dead = t->sem_philo_dead;
+	(*p)->sem_death_lock = t->sem_death_lock;
 	(*p)->sem_meal_name = make_sem_meal_name(SEM_MEAL, (*p)->id);
 	if (!(*p)->sem_meal_name)
 		return (free(*p), *p = NULL, INIT_ERR_MALLOC);

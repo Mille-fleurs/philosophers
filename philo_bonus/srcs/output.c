@@ -36,4 +36,3 @@ void	print_status(t_philo *philo, t_status code)
 	}
 	sem_post(philo->sem_print);
 }
-
